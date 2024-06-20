@@ -1,0 +1,51 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <title>Flights</title>
+    <meta charset="utf-8" />
+    <script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
+    <script type="text/javascript">$(document).ready(function() {
+            loadFlights();
+
+            function loadFlights() {
+                $.ajax({
+                    url: "/api/flights",
+                    method: "GET",
+                    success: function(data) {
+                        console.log("Data: ", data);  // Log the data
+
+                        let tableOfFlights = '<table border="1">';
+                        tableOfFlights += '<tr><th>Airline</th><th>From</th><th>Destination</th><th>Departure time</th><th>Arrival time</th><th>Available seats</th><th>Booked seats</th><th>Price</th></tr>';
+
+                        data.forEach(function(element) {
+                            if (element.Status == 0) {
+                                let flight = '<tr>';
+                                flight += '<td>' + element.Airline.Name + '</td>';
+                                flight += '<td>' + element.From + '</td>';
+                                flight += '<td>' + element.Destination + '</td>';
+                                flight += '<td>' + new Date(element.DepartureDateTime).toLocaleString() + '</td>';
+                                flight += '<td>' + new Date(element.ArrivalDateTime).toLocaleString() + '</td>';
+                                flight += '<td>' + element.AvailableSeats + '</td>';
+                                flight += '<td>' + element.BookedSeats + '</td>';
+                                flight += '<td>' + element.Price + '</td>';
+                                flight += '</tr>';
+                                tableOfFlights += flight;
+                            }
+                        });
+
+                        tableOfFlights += '</table>';
+                        $('#flights').html(tableOfFlights);
+                    },
+                    error: function() {
+                        console.error("Error fetching flights data.");
+                    }
+                });
+            }
+        });</script>
+</head>
+<body>
+    <h1>Flights</h1>
+    <div id="flights"></div>
+    <hr />
+</body>
+</html>

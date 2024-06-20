@@ -18,7 +18,7 @@ namespace Sistem_za_rezervaciju_avio_karata.Models
         public DateTime ArrivalDateTime { get; set; }
         public int AvailableSeats { get; set; }
         public int BookedSeats { get; set; }
-        public decimal Price { get; set; }
+        public string Price { get; set; }
         public FlightStatus Status { get; set; }
     }
 }
