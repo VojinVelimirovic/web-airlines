@@ -1,4 +1,6 @@
-﻿using System;
+﻿using Newtonsoft.Json;
+using Newtonsoft.Json.Converters;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Web;
@@ -18,7 +20,8 @@ namespace Sistem_za_rezervaciju_avio_karata.Models
         public DateTime ArrivalDateTime { get; set; }
         public int AvailableSeats { get; set; }
         public int BookedSeats { get; set; }
-        public string Price { get; set; }
+        public int Price { get; set; }
+        [JsonConverter(typeof(StringEnumConverter))]
         public FlightStatus Status { get; set; }
     }
 }

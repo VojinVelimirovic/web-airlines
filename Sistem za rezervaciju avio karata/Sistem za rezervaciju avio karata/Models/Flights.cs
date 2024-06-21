@@ -1,28 +1,49 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Web;
+using Newtonsoft.Json;
 
 namespace Sistem_za_rezervaciju_avio_karata.Models
 {
     public class Flights
     {
-        public static List<Flight> FlightsList { get; set; } = new List<Flight>() {
-            new Flight { Airline = new Airline { Name = "Nikola Tesla Airlines"}, From = "Belgrade", Destination = "Dubai", DepartureDateTime = DateTime.Now,
-            ArrivalDateTime = DateTime.Now, AvailableSeats = 70, BookedSeats = 32, Price = "7000RSD", Status = FlightStatus.Active},
-            new Flight { Airline = new Airline { Name = "Budapest Airlines"}, From = "Budapest", Destination = "New York", DepartureDateTime = DateTime.Now,
-            ArrivalDateTime = DateTime.Now, AvailableSeats = 70, BookedSeats = 32, Price = "7500RSD", Status = FlightStatus.Cancelled},
-            new Flight { Airline = new Airline { Name = "Dubai Airlines"}, From = "Dubai", Destination = "Belgrade", DepartureDateTime = DateTime.Now,
-            ArrivalDateTime = DateTime.Now, AvailableSeats = 70, BookedSeats = 32, Price = "8000RSD", Status = FlightStatus.Active}
-        };
+        private static readonly string jsonFilePath = HttpContext.Current.Server.MapPath("~/App_Data/flights.json");
+        public static List<Flight> FlightsList { get; set; } = LoadFlights();
+        private static List<Flight> LoadFlights()
+        {
+            if (!File.Exists(jsonFilePath))
+            {
+                return new List<Flight>();
+            }
+
+            var json = File.ReadAllText(jsonFilePath);
+            var retVal = JsonConvert.DeserializeObject<List<Flight>>(json) ?? new List<Flight>();
+            return retVal;
+        }
+
+        public static void SaveFlights()
+        {
+            var json = JsonConvert.SerializeObject(FlightsList, Formatting.Indented);
+            File.WriteAllText(jsonFilePath, json);
+        }
+
         public static Flight AddFlight(Flight flight)
         {
             FlightsList.Add(flight);
+            Airline a = Airlines.FindAirline(flight.Airline.Name);
+            a.AddFlight(flight);
+            SaveFlights();
             return flight;
         }
+
         public static void RemoveFlight(Flight flight)
         {
             FlightsList.Remove(flight);
+            Airline a = Airlines.FindAirline(flight.Airline.Name);
+            a.RemoveFlight(flight);
+            SaveFlights();
         }
     }
 }

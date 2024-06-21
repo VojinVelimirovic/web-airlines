@@ -1,0 +1,77 @@
+[
+  {
+    "Name": "Nikola Tesla Airlines",
+    "Address": "Aerodrom Beograd 59, Beograd 11180",
+    "ContactInfo": "tel 011 2094444",
+    "Flights": [
+      {
+        "Airline": {
+          "Name": "Nikola Tesla Airlines",
+          "Address": "Aerodrom Beograd 59, Beograd 11180",
+          "ContactInfo": "tel 011 2094444",
+          "Flights": null,
+          "Reviews": null
+        },
+        "From": "Belgrade",
+        "Destination": "Dubai",
+        "DepartureDateTime": "2024-06-21T09:36:21.1064785+02:00",
+        "ArrivalDateTime": "2024-06-21T09:36:21.1064785+02:00",
+        "AvailableSeats": 70,
+        "BookedSeats": 32,
+        "Price": 7000,
+        "Status": "Active"
+      }
+    ],
+    "Reviews": null
+  },
+  {
+    "Name": "Budapest Airlines",
+    "Address": "Budapest, 1185 Hungary",
+    "ContactInfo": "tel +36 1 296 7000",
+    "Flights": [
+      {
+        "Airline": {
+          "Name": "Budapest Airlines",
+          "Address": "Budapest, 1185 Hungary",
+          "ContactInfo": "tel +36 1 296 7000",
+          "Flights": null,
+          "Reviews": null
+        },
+        "From": "Budapest",
+        "Destination": "New York",
+        "DepartureDateTime": "2024-06-21T09:36:21.1064785+02:00",
+        "ArrivalDateTime": "2024-06-21T09:36:21.1064785+02:00",
+        "AvailableSeats": 70,
+        "BookedSeats": 32,
+        "Price": 7500,
+        "Status": "Cancelled"
+      }
+    ],
+    "Reviews": null
+  },
+  {
+    "Name": "Dubai Airlines",
+    "Address": "Dubai - United Arab Emirates",
+    "ContactInfo": "tel +971 4 224 5555",
+    "Flights": [
+      {
+        "Airline": {
+          "Name": "Dubai Airlines",
+          "Address": "Dubai - United Arab Emirates",
+          "ContactInfo": "tel +971 4 224 5555",
+          "Flights": null,
+          "Reviews": null
+        },
+        "From": "Dubai",
+        "Destination": "Belgrade",
+        "DepartureDateTime": "2024-06-21T09:36:21.1064785+02:00",
+        "ArrivalDateTime": "2024-06-21T09:36:21.1064785+02:00",
+        "AvailableSeats": 70,
+        "BookedSeats": 32,
+        "Price": 8000,
+        "Status": "Active"
+      }
+    ],
+    "Reviews": null
+  }
+]
