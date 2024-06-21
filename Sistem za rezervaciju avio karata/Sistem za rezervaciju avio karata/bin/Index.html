@@ -12,7 +12,6 @@
             let flightsData = [];
 
             loadFlights();
-
             loadAirlines();
 
             function loadAirlines() {
@@ -21,6 +20,7 @@
                     method: "GET",
                     success: function (data) {
                         populateAirlinesDropdown(data);
+                        renderAirlinesTable(data);
                     },
                     error: function () {
                         console.error("Error fetching airlines data.");
@@ -58,13 +58,17 @@
             }
 
             function renderFlightsTable(data) {
+                let activeFlights = data.filter(element => element.status === 'Active');
+
                 let tableOfFlights = '<table border="1">';
                 tableOfFlights += '<tr><th>Airline</th><th>From</th><th>Destination</th><th>Departure time</th><th>Arrival time</th><th>Available seats</th><th>Booked seats</th><th>Price(RSD)</th><th>Status</th></tr>';
 
-                data.forEach(function (element) {
-                    if (element.status == 'Active') {
+                if (activeFlights.length === 0) {
+                    tableOfFlights += '<tr><td colspan="9" style="font-size: 18px;">No active flights</td></tr>';
+                } else {
+                    activeFlights.forEach(function (element) {
                         let flight = '<tr>';
-                        flight += '<td>' + element.airline.name + '</td>';
+                        flight += `<td><a href="#airlines" class="airline-name" data-airline='${JSON.stringify(element.airline)}'>${element.airline.name}</a></td>`;
                         flight += '<td>' + element.from + '</td>';
                         flight += '<td>' + element.destination + '</td>';
                         flight += '<td>' + new Date(element.departureDateTime).toLocaleString() + '</td>';
@@ -75,12 +79,72 @@
                         flight += '<td>' + element.status + '</td>';
                         flight += '</tr>';
                         tableOfFlights += flight;
-                    }
-                });
+                    });
+                }
 
                 tableOfFlights += '</table>';
                 $('#flights').html(tableOfFlights);
+
+                $('.airline-name').click(function (event) {
+                    event.preventDefault();
+                    $('html, body').animate({
+                        scrollTop: $('#airlines').offset().top
+                    }, 800);
+                });
             }
+
+            function renderAirlinesTable(data) {
+                let tableOfAirlines = '<table border="1">';
+                data.forEach(function (element) {
+                    let airline = `<tr class="airline-row" data-airline='${JSON.stringify(element)}'>
+                                            <td><h2 style="margin: 0;" class = "airline-name">${element.name}</h2></td>
+                                           </tr>`;
+                    tableOfAirlines += airline;
+                });
+
+                tableOfAirlines += '</table>';
+                $('#airlines').html(tableOfAirlines);
+                $('.airline-row').click(function () {
+                    const airlineData = $(this).data('airline');
+                    const nextRow = $(this).next('.airline-details');
+
+                    if (nextRow.length) {
+                        nextRow.remove();
+                    } else {
+                        $(this).after(`<tr class="airline-details">
+                                                <td colspan="1">
+                                                    <p><strong>Address:</strong> ${airlineData.address}</p>
+                                                    <p><strong>Contact Info:</strong> ${airlineData.contactInfo}</p>
+                                                    <div class="reviews">
+                                                        ${renderReviews(airlineData.reviews)}
+                                                    </div>
+                                                </td>
+                                               </tr>`);
+                    }
+                });
+            }
+
+            function renderReviews(reviews) {
+                if (!reviews || reviews.length === 0) {
+                    return '';
+                }
+
+                let approvedReviews = reviews.filter(review => review.status === 'Approved');
+                if (approvedReviews.length === 0) {
+                    return '';
+                }
+
+                let reviewsHtml = '<h3>Reviews:</h3>';
+                approvedReviews.forEach(function (review) {
+                    reviewsHtml += `<div class="review">
+                                                <p><strong>Title:</strong> ${review.title}</p>
+                                                <p>${review.content}</p>
+                                            </div>`;
+                });
+
+                return reviewsHtml;
+            }
+
             $('#sortSelect').change(function () {
                 let sortBy = $(this).val();
 
@@ -92,6 +156,7 @@
 
                 renderFlightsTable(flightsData);
             });
+
             $('#searchForm').submit(function (event) {
                 event.preventDefault();
 
@@ -129,36 +194,44 @@
 <body>
     <div class="menu">
         <a href="Index.html">Flights</a>
-        <a href="Airlines.html">Airlines</a>
         <a href="Register.html">Register</a>
         <a href="Login.html">Log in</a>
     </div>
-    <br/>
+    <br />
     <h1>Flights</h1>
     <div>
         <form id="searchForm">
-            <label>Airline Name:</label>
+            <label for="airlineName">Airline Name:</label>
             <select id="airlineName" style="width:150px"></select>
-            <label>From:</label>
+            <label for="from">From:</label>
             <input type="text" id="from" class="input-field">
-            <label>Destination:</label>
+            <label for="destination">Destination:</label>
             <input type="text" id="destination" class="input-field">
-            <label>Departure Date:</label>
+            <label for="departureDate">Departure Date:</label>
             <input type="text" id="departureDate" class="datepicker">
-            <label>Arrival Date:</label>
+            <label for="arrivalDate">Arrival Date:</label>
             <input type="text" id="arrivalDate" class="datepicker">
             <input type="submit" value="Search">
         </form>
         <div style="float:right">
-        <label>Sort by:</label>
-        <select id="sortSelect">
-            <option value="asc">Price (Ascending)</option>
-            <option value="desc">Price (Descending)</option>
-        </select>
-    </div>
+            <label for="sortSelect">Sort by:</label>
+            <select id="sortSelect">
+                <option value="asc">Price (Ascending)</option>
+                <option value="desc">Price (Descending)</option>
+            </select>
+        </div>
     </div>
     <br />
     <div id="flights"></div>
+    <br />
+    <h1>Airlines</h1>
+    <div id="airlines"></div>
+    <br />
+    <br />
+    <br />
+    <br />
+    <br />
+    <br />
     <script>
         $(function () {
             $(".datepicker").datepicker({ dateFormat: 'yy-mm-dd' });
