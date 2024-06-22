@@ -53,5 +53,16 @@
     "Gender": "Male",
     "UserType": 0,
     "Reservations": []
+  },
+  {
+    "Username": "nikola",
+    "Password": "nikola",
+    "FirstName": "Nikola",
+    "LastName": "Nikolic",
+    "Email": "nikola@gmail.com",
+    "DateOfBirth": "19/01/2000",
+    "Gender": "Male",
+    "UserType": 0,
+    "Reservations": []
   }
 ]

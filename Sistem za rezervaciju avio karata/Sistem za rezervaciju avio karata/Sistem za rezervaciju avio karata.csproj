@@ -192,6 +192,9 @@
     <Content Include="MainStyle.css">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
+    <Content Include="Profile.html">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
     <Content Include="Register.html">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>

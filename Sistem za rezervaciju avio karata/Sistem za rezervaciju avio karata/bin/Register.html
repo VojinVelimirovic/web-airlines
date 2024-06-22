@@ -30,7 +30,7 @@
                 console.log("User data to be sent:", user);
 
                 $.ajax({
-                    url: '/api/users',
+                    url: '/api/users/register',
                     method: 'POST',
                     contentType: 'application/json',
                     data: JSON.stringify(user),

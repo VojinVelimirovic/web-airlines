@@ -1,0 +1,67 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <title>Profile</title>
+    <script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
+    <link rel="stylesheet" href="MainStyle.css">
+    <script>
+        $(document).ready(function () {
+            $.ajax({
+                url: '/api/users/currentuser',
+                method: 'GET',
+                success: function (user) {
+                    document.title = `${user.username}'s Profile`;
+                    $('#profileTitle').text(`${user.username} (${user.firstName} ${user.lastName})`);
+                    $('#email').text(`Email: ${user.email}`);
+                    $('#dob').text(`Date of Birth: ${user.dateOfBirth}`);
+                    $('#gender').text(`Gender: ${user.gender}`);
+                    $('#type').text(`User type: ${user.userType}`);
+                    $('#profileInfo').show(); // Show the profile info div after loading data
+                    $('#loadingMessage').hide(); // Hide the loading message
+                },
+                error: function (xhr) {
+                    console.error(`Failed to load profile: ${xhr.responseText}`);
+                    alert(`Failed to load profile: ${xhr.responseText}`);
+                    window.location.href = 'Login.html';
+                }
+            });
+            $('#logoutBtn').click(function (event) {
+                event.preventDefault();
+
+                $.ajax({
+                    url: '/api/users/logout',
+                    method: 'POST',
+                    success: function () {
+                        alert('Logged out successfully!');
+                        window.location.href = 'Index.html'; // Redirect to logged out version of Index
+                    },
+                    error: function (xhr) {
+                        console.error('Failed to log out:', xhr.responseText);
+                        alert('Failed to log out. Please try again.');
+                        window.location.href = 'Index.html'; // Redirect to logged out version of Index
+                    }
+                });
+            });
+        });
+    </script>
+</head>
+<body>
+    <div class="menu">
+        <a href="Index.html">Flights</a>
+        <a href="Profile.html">Profile</a>
+        <a href="#" id="logoutBtn">Log out</a>
+    </div>
+    <br />
+    <h1 id="loadingMessage">Loading...</h1>
+    <div id="profileInfo">
+        <p id="profileTitle"></p>
+        <ul>
+            <li id="email"></li>
+            <li id="dob"></li>
+            <li id="gender"></li>
+            <li id="type"></li>
+        </ul>
+    </div>
+</body>
+</html>

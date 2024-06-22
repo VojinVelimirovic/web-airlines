@@ -122,6 +122,57 @@
                                                </tr>`);
                     }
                 });
+                $(document).ready(function () {
+                    checkSession();
+
+                    function checkSession() {
+                        $.ajax({
+                            url: "/api/users/currentuser",
+                            method: "GET",
+                            success: function (user) {
+                                if (user) {
+                                    showLoggedInMenu(user);
+                                } else {
+                                    showLoggedOutMenu();
+                                }
+                            },
+                            error: function () {
+                                console.error("Error fetching user session.");
+                                showLoggedOutMenu();
+                            }
+                        });
+                    }
+
+                    function showLoggedInMenu(user) {
+                        $('.menu').html(`
+                    <a href="Index.html">Flights</a>
+                    <a href="Profile.html">Profile</a>
+                    <a href="#" id="logout">Log out</a>
+                `);
+
+                        $('#logout').click(function () {
+                            $.ajax({
+                                url: "/api/users/logout",
+                                method: "POST",
+                                success: function () {
+                                    alert('Logged out successfully.');
+                                    location.reload();
+                                },
+                                error: function () {
+                                    console.error("Error logging out.");
+                                }
+                            });
+                        });
+                    }
+
+                    function showLoggedOutMenu() {
+                        $('.menu').html(`
+                    <a href="Index.html">Flights</a>
+                    <a href="Register.html">Register</a>
+                    <a href="Login.html">Log in</a>
+                `);
+                    }
+                });
             }
 
             function renderReviews(reviews) {
