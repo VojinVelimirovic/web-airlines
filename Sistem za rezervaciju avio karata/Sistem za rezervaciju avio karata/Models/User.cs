@@ -13,7 +13,7 @@ namespace Sistem_za_rezervaciju_avio_karata.Models
         public string FirstName { get; set; }
         public string LastName { get; set; }
         public string Email { get; set; }
-        public DateTime DateOfBirth { get; set; }
+        public string DateOfBirth { get; set; }
         public string Gender { get; set; }
         public UserType UserType { get; set; }
         public List<Reservation> Reservations { get; set; }

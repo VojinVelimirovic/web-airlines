@@ -9,8 +9,8 @@
           "Name": "Nikola Tesla Airlines",
           "Address": "Aerodrom Beograd 59, Beograd 11180",
           "ContactInfo": "tel 011 2094444",
-          "Flights": null,
-          "Reviews": null
+          "Flights": [],
+          "Reviews": []
         },
         "From": "Belgrade",
         "Destination": "Dubai",
@@ -22,7 +22,7 @@
         "Status": "Active"
       }
     ],
-    "Reviews": null
+    "Reviews": []
   },
   {
     "Name": "Budapest Airlines",
@@ -34,8 +34,8 @@
           "Name": "Budapest Airlines",
           "Address": "Budapest, 1185 Hungary",
           "ContactInfo": "tel +36 1 296 7000",
-          "Flights": null,
-          "Reviews": null
+          "Flights": [],
+          "Reviews": []
         },
         "From": "Budapest",
         "Destination": "New York",
@@ -47,7 +47,7 @@
         "Status": "Cancelled"
       }
     ],
-    "Reviews": null
+    "Reviews": []
   },
   {
     "Name": "Dubai Airlines",
@@ -59,8 +59,8 @@
           "Name": "Dubai Airlines",
           "Address": "Dubai - United Arab Emirates",
           "ContactInfo": "tel +971 4 224 5555",
-          "Flights": null,
-          "Reviews": null
+          "Flights": [],
+          "Reviews": []
         },
         "From": "Dubai",
         "Destination": "Belgrade",
@@ -72,6 +72,6 @@
         "Status": "Active"
       }
     ],
-    "Reviews": null
+    "Reviews": []
   }
 ]

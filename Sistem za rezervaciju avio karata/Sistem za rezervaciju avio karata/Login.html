@@ -3,7 +3,56 @@
 <head>
     <meta charset="utf-8" />
     <title>Log in</title>
+    <script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
     <link rel="stylesheet" href="MainStyle.css">
+    <script>
+        $(document).ready(function () {
+            $('#loginForm').submit(function (event) {
+                event.preventDefault();
+
+                const username = $('#username').val();
+                const password = $('#password').val();
+
+                $.ajax({
+                    url: `/api/users/${username}`,
+                    method: 'GET',
+                    success: function (user) {
+                        console.log('Success: ', user);
+
+                        if (user !== null && user !== undefined) {
+                            if (user.password == password) {
+                                console.log('Login successful!');
+                                alert('Login successful!');
+                                // Redirect to the starting page after successful login
+                                window.location.href = 'Index.html';
+                            } else {
+                                $('#passwordError').text('Incorrect password.');
+                            }
+                        } else {
+                            $('#usernameError').text("Username doesn't exist.");
+                        }
+                    },
+                    error: function (xhr) {
+                        console.error('Error response:', xhr);
+                        if (xhr.status === 404) {
+                            $('#usernameError').text("Username doesn't exist.");
+                        } else {
+                            console.error('Login failed:', xhr.responseText || 'Unknown error.');
+                        }
+                    }
+                });
+            });
+
+            $('#username').on('input', function () {
+                $('#usernameError').text('');
+                $('#passwordError').text('');
+            });
+
+            $('#password').on('input', function () {
+                $('#passwordError').text('');
+            });
+        });
+    </script>
 </head>
 <body>
     <div class="menu">
@@ -13,5 +62,18 @@
     </div>
     <br />
     <h1>Log in</h1>
+    <form id="loginForm" style="margin-left:20px">
+        <label for="username">Username:</label>
+        <input type="text" id="username" name="username" required>
+        <span id="usernameError" class="error"></span>
+        <br><br>
+
+        <label for="password">Password:</label>
+        <input type="password" id="password" name="password" required>
+        <span id="passwordError" class="error"></span>
+        <br><br>
+
+        <input type="submit" value="Login">
+    </form>
 </body>
 </html>

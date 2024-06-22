@@ -35,6 +35,14 @@ namespace Sistem_za_rezervaciju_avio_karata.Models
 
         public static Airline AddAirline(Airline airline)
         {
+            if(airline.Reviews == null)
+            {
+                airline.Reviews = new List<Review>();
+            }
+            if (airline.Flights == null)
+            {
+                airline.Flights = new List<Flight>();
+            }
             AirlinesList.Add(airline);
             SaveAirlines();
             return airline;

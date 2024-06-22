@@ -1,0 +1,57 @@
+[
+  {
+    "Username": "vojin",
+    "Password": "vojin",
+    "FirstName": "Vojin",
+    "LastName": "Velimirovic",
+    "Email": "vojinvelimirovic2002@gmail.com",
+    "DateOfBirth": "24/12/2002",
+    "Gender": "Male",
+    "UserType": 1,
+    "Reservations": []
+  },
+  {
+    "Username": "pera",
+    "Password": "pera",
+    "FirstName": "Pera",
+    "LastName": "Peric",
+    "Email": "pera@gmail.com",
+    "DateOfBirth": "01/01/2000",
+    "Gender": "Male",
+    "UserType": 0,
+    "Reservations": []
+  },
+  {
+    "Username": "marko",
+    "Password": "marko",
+    "FirstName": "Marko",
+    "LastName": "Markovic",
+    "Email": "marko@gmail.com",
+    "DateOfBirth": "18/01/2000",
+    "Gender": "Male",
+    "UserType": 0,
+    "Reservations": []
+  },
+  {
+    "Username": "luka",
+    "Password": "luka",
+    "FirstName": "Luka",
+    "LastName": "Lukic",
+    "Email": "luka@gmail.com",
+    "DateOfBirth": "24/01/2000",
+    "Gender": "Male",
+    "UserType": 0,
+    "Reservations": []
+  },
+  {
+    "Username": "david",
+    "Password": "david",
+    "FirstName": "David",
+    "LastName": "Davidovic",
+    "Email": "david@gmail.com",
+    "DateOfBirth": "12/01/2000",
+    "Gender": "Male",
+    "UserType": 0,
+    "Reservations": []
+  }
+]

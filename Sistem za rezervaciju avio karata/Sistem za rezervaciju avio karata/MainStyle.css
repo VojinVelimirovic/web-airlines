@@ -67,3 +67,7 @@ th {
     text-decoration: none;
 }
 
+.error {
+    color: red;
+}
+
