@@ -35,13 +35,11 @@
                     contentType: 'application/json',
                     data: JSON.stringify(user),
                     success: function (data) {
-                        alert('Registration successful!');
                         window.location.href = 'Index.html';
                     },
                     error: function (xhr) {
                         const errorMessage = xhr.responseText || 'Registration failed!';
                         console.error("Error response:", errorMessage);
-                        alert(errorMessage);
                     }
                 });
             });

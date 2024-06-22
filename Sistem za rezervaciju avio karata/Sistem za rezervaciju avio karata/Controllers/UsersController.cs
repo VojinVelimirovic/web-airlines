@@ -81,6 +81,7 @@ namespace Sistem_za_rezervaciju_avio_karata.Controllers
             Users.RemoveUser(user);
             return StatusCode(HttpStatusCode.NoContent);
         }
+
         [HttpPost]
         [Route("api/users/register")]
         public IHttpActionResult Register(User user)
@@ -89,52 +90,39 @@ namespace Sistem_za_rezervaciju_avio_karata.Controllers
             {
                 return BadRequest("User data is null.");
             }
-
-            // Validate user input (e.g., check for existing username)
             if (Users.FindByUsername(user.Username) != null)
             {
                 return BadRequest("Username already exists.");
             }
-
-            // Add user to database or list (replace with your actual logic)
             Users.AddUser(user);
-
-            // Set session for the registered user
             HttpContext.Current.Session["CurrentUser"] = user;
 
             return Ok(user);
         }
 
-        // GET api/users/login/{username}
         [HttpGet]
         [Route("api/users/login/{username}")]
         public IHttpActionResult Login(string username)
         {
-            // Retrieve user from database or list (replace with your actual logic)
             var user = Users.FindByUsername(username);
             if (user == null)
             {
                 return NotFound();
             }
-
-            // Set session for the logged-in user
             HttpContext.Current.Session["CurrentUser"] = user;
 
             return Ok(user);
         }
 
-        // POST api/users/logout
         [HttpPost]
         [Route("api/users/logout")]
         public IHttpActionResult Logout()
         {
-            // Clear session for the current user
             HttpContext.Current.Session.Remove("CurrentUser");
 
             return Ok();
         }
 
-        // GET api/users/currentuser
         [HttpGet]
         [Route("api/users/currentuser")]
         public IHttpActionResult GetCurrentUser()
@@ -145,6 +133,39 @@ namespace Sistem_za_rezervaciju_avio_karata.Controllers
             {
                 return NotFound();
             }
+
+            return Ok(currentUser);
+        }
+
+        [HttpPost]
+        [Route("api/users/update")]
+        public IHttpActionResult UpdateUser(User updatedUser)
+        {
+            var currentUser = HttpContext.Current.Session["CurrentUser"] as User;
+            if (currentUser == null)
+            {
+                return Unauthorized();
+            }
+
+            var existingUser = Users.FindByUsername(updatedUser.Username);
+            if (existingUser != null && existingUser.Username != currentUser.Username)
+            {
+                return BadRequest("Username already exists.");
+            }
+
+            currentUser.Username = updatedUser.Username;
+            currentUser.Password = updatedUser.Password;
+            currentUser.FirstName = updatedUser.FirstName;
+            currentUser.LastName = updatedUser.LastName;
+            currentUser.Email = updatedUser.Email;
+            currentUser.DateOfBirth = updatedUser.DateOfBirth;
+            currentUser.Gender = updatedUser.Gender;
+
+            Users.UpdateUser(currentUser);
+
+            Users.SaveUsers();
+
+            HttpContext.Current.Session["CurrentUser"] = currentUser;
 
             return Ok(currentUser);
         }

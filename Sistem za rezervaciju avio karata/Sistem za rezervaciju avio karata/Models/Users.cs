@@ -51,5 +51,20 @@ namespace Sistem_za_rezervaciju_avio_karata.Models
             UsersList.Remove(user);
             SaveUsers();
         }
+
+        public static void UpdateUser(User updatedUser)
+        {
+            var existingUser = FindByUsername(updatedUser.Username);
+            if (existingUser != null)
+            {
+                existingUser.Password = updatedUser.Password;
+                existingUser.FirstName = updatedUser.FirstName;
+                existingUser.LastName = updatedUser.LastName;
+                existingUser.Email = updatedUser.Email;
+                existingUser.DateOfBirth = updatedUser.DateOfBirth;
+                existingUser.Gender = updatedUser.Gender;
+                existingUser.UserType = updatedUser.UserType;
+            }
+        }
     }
 }

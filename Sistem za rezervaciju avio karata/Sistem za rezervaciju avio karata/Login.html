@@ -18,7 +18,6 @@
                     method: "GET",
                     success: function (user) {
                         if (user.password === password) {
-                            alert('Logged in successfully.');
                             window.location.href = "Index.html";
                         } else {
                             $('#passwordError').text('Incorrect password.');
@@ -28,7 +27,6 @@
                         if (xhr.status === 404) {
                             $('#usernameError').text("Username doesn't exist.");
                         } else {
-                            alert('Error logging in. Please try again.');
                         }
                     }
                 });
