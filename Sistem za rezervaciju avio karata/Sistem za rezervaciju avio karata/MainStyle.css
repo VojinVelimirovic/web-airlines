@@ -79,6 +79,7 @@ th {
 }
 
 #profileTitle {
+    margin-left:10px;
     font-size: 30px;
     font-weight: bold;
 }
@@ -91,4 +92,15 @@ th {
 
 #profileInfo li {
     margin: 5px 0;
+}
+
+.center-radio {
+    text-align: center;
+    vertical-align: middle;
+}
+
+.center-radio input[type="radio"] {
+    margin: 0;
+    display: inline-block;
+    vertical-align: middle;
 }

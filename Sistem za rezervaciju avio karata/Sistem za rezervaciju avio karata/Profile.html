@@ -7,14 +7,10 @@
     <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.min.js"></script>
     <link rel="stylesheet" href="https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
     <link rel="stylesheet" href="MainStyle.css">
-    <style>
-        .error {
-            color: red;
-            font-size: 12px;
-        }
-    </style>
     <script>
         $(document).ready(function () {
+            let allReservations = []; // To store all reservations for filtering
+
             function loadProfile() {
                 $.ajax({
                     url: '/api/users/currentuser',
@@ -30,19 +26,50 @@
                         $('#loadingMessage').hide();
 
                         $('#editUsername').val(user.username);
-                        $('#editUsername').attr('data-current-username', user.username); 
+                        $('#editUsername').attr('data-current-username', user.username);
                         $('#editPassword').val(user.password);
                         $('#editFirstName').val(user.firstName);
                         $('#editLastName').val(user.lastName);
                         $('#editEmail').val(user.email);
                         $('#editDateOfBirth').val(user.dateOfBirth);
                         $('input[name="editGender"][value="' + user.gender + '"]').prop('checked', true);
+
+                        if (user.userType === 'Traveler') {
+                            allReservations = user.reservations; // Store all reservations
+                            displayReservations(allReservations); // Display all reservations initially
+                        }
                     },
                     error: function (xhr) {
                         console.error(`Failed to load profile: ${xhr.responseText}`);
                         window.location.href = 'Login.html';
                     }
                 });
+            }
+
+            function displayReservations(reservations) {
+                $('#reservationsSection').show();
+                const tableBody = $('#reservationsBody');
+                tableBody.empty();
+
+                if (reservations.length === 0) {
+                    tableBody.append('<tr><td colspan="7">No reservations made</td></tr>');
+                } else {
+                    reservations.forEach(function (reservation) {
+                        const flight = reservation.flight;
+                        const departureDate = new Date(flight.departureDateTime).toLocaleString();
+                        const arrivalDate = new Date(flight.arrivalDateTime).toLocaleString();
+                        const row = `<tr>
+                                        <td>${reservation.user.username}</td>
+                                        <td>${flight.from} - ${flight.destination}</td>
+                                        <td>${departureDate}</td>
+                                        <td>${arrivalDate}</td>
+                                        <td>${reservation.numberOfPassengers}</td>
+                                        <td>${reservation.totalPrice}</td>
+                                        <td>${reservation.status}</td>
+                                    </tr>`;
+                        tableBody.append(row);
+                    });
+                }
             }
 
             loadProfile();
@@ -79,8 +106,6 @@
                     DateOfBirth: $('#editDateOfBirth').val(),
                     Gender: $('input[name="editGender"]:checked').val(),
                 };
-
-                console.log("Updated User data to be sent:", updatedUser);
 
                 $.ajax({
                     url: '/api/users/update',
@@ -134,6 +159,17 @@
                     }
                 });
             });
+
+            $('#filterBtn').click(function () {
+                const status = $('#filterStatus').val();
+
+                let filteredReservations = allReservations;
+                if (status !== '-') {
+                    filteredReservations = allReservations.filter(reservation => reservation.status === status);
+                }
+
+                displayReservations(filteredReservations);
+            });
         });
     </script>
 </head>
@@ -153,7 +189,7 @@
             <li id="gender"></li>
             <li id="type"></li>
         </ul>
-        <button id="editBtn">Edit Profile</button>
+        <button id="editBtn" style="margin-left:10px;">Edit Profile</button>
     </div>
 
     <div id="editProfileModal" style="display:none;">
@@ -180,5 +216,36 @@
             <button type="button" id="cancelEditBtn">Cancel</button>
         </form>
     </div>
-    </body>
+    <br/>
+    <div id="reservationsSection" style="display: none; margin-left: 20px; margin-right:20px;">
+        <h1>Reservations</h1>
+        <div style="margin-left:20px;">
+            <label for="filterStatus">Filter by Status:</label>
+            <select id="filterStatus">
+                <option value="-">All</option>
+                <option value="Created">Created</option>
+                <option value="Approved">Approved</option>
+                <option value="Cancelled">Cancelled</option>
+                <option value="Completed">Completed</option>
+            </select>
+            <button id="filterBtn">Filter</button>
+        </div>
+        <br />
+        <table id="reservationsTable">
+            <thead>
+                <tr>
+                    <th>Name</th>
+                    <th>Route</th>
+                    <th>Departure</th>
+                    <th>Arrival</th>
+                    <th>Number of passengers</th>
+                    <th>Total price (RSD)</th>
+                    <th>Status</th>
+                </tr>
+            </thead>
+            <tbody id="reservationsBody">
+            </tbody>
+        </table>
+    </div>
+</body>
 </html>

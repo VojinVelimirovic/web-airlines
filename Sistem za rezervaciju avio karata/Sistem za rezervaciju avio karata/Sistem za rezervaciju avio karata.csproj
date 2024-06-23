@@ -159,6 +159,7 @@
     <Compile Include="Controllers\DefaultController.cs" />
     <Compile Include="Controllers\FlightsController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
+    <Compile Include="Controllers\ReservationsController.cs" />
     <Compile Include="Controllers\UsersController.cs" />
     <Compile Include="Controllers\ValuesController.cs" />
     <Compile Include="Global.asax.cs">
@@ -169,6 +170,7 @@
     <Compile Include="Models\Flight.cs" />
     <Compile Include="Models\Flights.cs" />
     <Compile Include="Models\Reservation.cs" />
+    <Compile Include="Models\Reservations.cs" />
     <Compile Include="Models\Review.cs" />
     <Compile Include="Models\User.cs" />
     <Compile Include="Models\Users.cs" />

@@ -45,5 +45,26 @@ namespace Sistem_za_rezervaciju_avio_karata.Models
             a.RemoveFlight(flight);
             SaveFlights();
         }
+
+        public static Flight UpdateFlight(Flight updatedFlight)
+        {
+            var existingFlight = FlightsList.FirstOrDefault(f =>
+                f.Airline.Name == updatedFlight.Airline.Name &&
+                f.From == updatedFlight.From &&
+                f.Destination == updatedFlight.Destination &&
+                f.DepartureDateTime == updatedFlight.DepartureDateTime
+            );
+
+            if (existingFlight != null)
+            {
+                existingFlight.AvailableSeats = updatedFlight.AvailableSeats;
+                existingFlight.BookedSeats = updatedFlight.BookedSeats;
+                existingFlight.Status = updatedFlight.Status;
+                existingFlight.Price = updatedFlight.Price;
+                SaveFlights();
+            }
+
+            return existingFlight;
+        }
     }
 }
