@@ -63,7 +63,7 @@
     },
     "NumberOfPassengers": 2,
     "TotalPrice": 16000,
-    "Status": 0
+    "Status": 3
   },
   {
     "User": {
@@ -163,7 +163,7 @@
     },
     "NumberOfPassengers": 1,
     "TotalPrice": 8000,
-    "Status": 0
+    "Status": 3
   },
   {
     "User": {
@@ -263,6 +263,39 @@
     },
     "NumberOfPassengers": 1,
     "TotalPrice": 8000,
+    "Status": 3
+  },
+  {
+    "User": {
+      "Username": "jovan",
+      "Password": "jovan",
+      "FirstName": "Jovan",
+      "LastName": "Jovanovic",
+      "Email": "jovan@gmail.com",
+      "DateOfBirth": "28/01/2000",
+      "Gender": "Male",
+      "UserType": 0,
+      "Reservations": []
+    },
+    "Flight": {
+      "Airline": {
+        "Name": "Nikola Tesla Airlines",
+        "Address": "Aerodrom Beograd 59, Beograd 11180",
+        "ContactInfo": "tel 011 2094444",
+        "Flights": [],
+        "Reviews": []
+      },
+      "From": "Belgrade",
+      "Destination": "Dubai",
+      "DepartureDateTime": "2024-07-01T09:36:21.1064785+02:00",
+      "ArrivalDateTime": "2024-07-02T09:36:21.1064785+02:00",
+      "AvailableSeats": 65,
+      "BookedSeats": 37,
+      "Price": 7000,
+      "Status": "Active"
+    },
+    "NumberOfPassengers": 4,
+    "TotalPrice": 28000,
     "Status": 0
   }
 ]

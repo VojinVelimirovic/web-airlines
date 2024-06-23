@@ -11,9 +11,9 @@ namespace Sistem_za_rezervaciju_avio_karata.Models
     public class Users
     {
         private static readonly string jsonFilePath = HttpContext.Current.Server.MapPath("~/App_Data/users.json");
-        public static List<User> UsersList { get; set; } = LoadUsers();
+        public static List<User> UsersList { get; set; }
 
-        private static List<User> LoadUsers()
+        public static List<User> LoadUsers()
         {
             if (!File.Exists(jsonFilePath))
             {

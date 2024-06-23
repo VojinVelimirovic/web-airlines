@@ -22,6 +22,9 @@
                     success: function (user) {
                         currentUser = user;
                         showMenuBasedOnUser(user);
+                        if (user && user.userType === 'Traveler') {
+                            $('#reservation-form').show();
+                        }
                         loadFlights();
                         loadAirlines();
                     },
@@ -44,10 +47,10 @@
 
             function showLoggedInMenu(user) {
                 $('.menu').html(`
-                                    <a href="Index.html">Flights</a>
-                                    <a href="Profile.html">Profile</a>
-                                    <a href="#" id="logout">Log out</a>
-                                `);
+                        <a href="Index.html">Flights</a>
+                        <a href="Profile.html">Profile</a>
+                        <a href="#" id="logout">Log out</a>
+                    `);
 
                 $('#logout').click(function () {
                     $.ajax({
@@ -65,10 +68,10 @@
 
             function showLoggedOutMenu() {
                 $('.menu').html(`
-                                    <a href="Index.html">Flights</a>
-                                    <a href="Register.html">Register</a>
-                                    <a href="Login.html">Log in</a>
-                                `);
+                        <a href="Index.html">Flights</a>
+                        <a href="Register.html">Register</a>
+                        <a href="Login.html">Log in</a>
+                    `);
             }
 
             function loadFlights() {
@@ -159,7 +162,8 @@
                 if (currentUser && currentUser.userType === 'Traveler') {
                     $('.reserve-flight').change(function () {
                         selectedFlight = JSON.parse($(this).attr('data-flight'));
-                        $('#reservation-form').show();
+                        $('#numberOfSeats').prop('disabled', false);
+                        $('#createReservation').prop('disabled', false);
                         $('#reservation-error').remove();
                     });
                 }
@@ -169,8 +173,8 @@
                 let tableOfAirlines = '<table border="1">';
                 data.forEach(function (element) {
                     let airline = `<tr class="airline-row" data-airline='${JSON.stringify(element)}'>
-                                            <td><h2 style="margin: 0;" class="airline-name">${element.name}</h2></td>
-                                       </tr>`;
+                            <td><h2 style="margin: 0;" class="airline-name">${element.name}</h2></td>
+                        </tr>`;
                     tableOfAirlines += airline;
                 });
 
@@ -184,14 +188,14 @@
                         nextRow.remove();
                     } else {
                         $(this).after(`<tr class="airline-details">
-                                            <td colspan="1">
-                                                <p><strong>Address:</strong> ${airlineData.address}</p>
-                                                <p><strong>Contact Info:</strong> ${airlineData.contactInfo}</p>
-                                                <div class="reviews">
-                                                    ${renderReviews(airlineData.reviews)}
-                                                </div>
-                                            </td>
-                                           </tr>`);
+                                <td colspan="1">
+                                    <p><strong>Address:</strong> ${airlineData.address}</p>
+                                    <p><strong>Contact Info:</strong> ${airlineData.contactInfo}</p>
+                                    <div class="reviews">
+                                        ${renderReviews(airlineData.reviews)}
+                                    </div>
+                                </td>
+                            </tr>`);
                     }
                 });
             }
@@ -209,9 +213,9 @@
                 let reviewsHtml = '<h3>Reviews:</h3>';
                 approvedReviews.forEach(function (review) {
                     reviewsHtml += `<div class="review">
-                                            <p><strong>Title:</strong> ${review.title}</p>
-                                            <p>${review.content}</p>
-                                        </div>`;
+                            <p><strong>Title:</strong> ${review.title}</p>
+                            <p>${review.content}</p>
+                        </div>`;
                 });
 
                 return reviewsHtml;
@@ -280,10 +284,12 @@
                         contentType: 'application/json',
                         data: JSON.stringify(reservation),
                         success: function () {
-                            $('#reservation-form').hide();
+                            $('#numberOfSeats').prop('disabled', true);
+                            $('#createReservation').prop('disabled', true);
                             loadFlights();
                         },
                         error: function (xhr, status, error) {
+                            console.error("Error creating reservation.");
                         }
                     });
                 } else {
@@ -331,11 +337,11 @@
     <br />
     <div id="flights"></div>
     <br>
-    <div id="reservation-form" style="display: none; margin-left:20px">
+    <div id="reservation-form" style="margin-left:20px; display:none;">
         <form id="reservationForm">
             <label for="numberOfSeats">Number of Seats:</label>
-            <input type="number" id="numberOfSeats" value="1" min="1">
-            <button type="submit" id="createReservation">Create reservation</button>
+            <input type="number" id="numberOfSeats" value="1" min="1" disabled>
+            <button type="submit" id="createReservation" disabled>Create reservation</button>
         </form>
     </div>
     <br />

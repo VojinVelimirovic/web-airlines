@@ -11,8 +11,8 @@
     "Destination": "Dubai",
     "DepartureDateTime": "2024-07-01T09:36:21.1064785+02:00",
     "ArrivalDateTime": "2024-07-02T09:36:21.1064785+02:00",
-    "AvailableSeats": 65,
-    "BookedSeats": 37,
+    "AvailableSeats": 61,
+    "BookedSeats": 41,
     "Price": 7000,
     "Status": "Active"
   },
@@ -31,7 +31,7 @@
     "AvailableSeats": 70,
     "BookedSeats": 32,
     "Price": 7500,
-    "Status": "Cancelled"
+    "Status": "Completed"
   },
   {
     "Airline": {
@@ -48,6 +48,6 @@
     "AvailableSeats": 66,
     "BookedSeats": 36,
     "Price": 8000,
-    "Status": "Active"
+    "Status": "Completed"
   }
 ]

@@ -10,8 +10,8 @@ namespace Sistem_za_rezervaciju_avio_karata.Models
     public class Flights
     {
         private static readonly string jsonFilePath = HttpContext.Current.Server.MapPath("~/App_Data/flights.json");
-        public static List<Flight> FlightsList { get; set; } = LoadFlights();
-        private static List<Flight> LoadFlights()
+        public static List<Flight> FlightsList { get; set; }
+        public static List<Flight> LoadFlights()
         {
             if (!File.Exists(jsonFilePath))
             {
