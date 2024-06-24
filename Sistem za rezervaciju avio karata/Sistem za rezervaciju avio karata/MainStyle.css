@@ -38,6 +38,10 @@ th {
     margin-right: 10px;
 }
 
+#airlineName {
+    margin-right: 10px;
+}
+
 .datepicker {
     width: 100px;
     margin-right: 10px;
@@ -103,4 +107,8 @@ th {
     margin: 0;
     display: inline-block;
     vertical-align: middle;
+}
+
+.center-checkbox {
+    text-align: center;
 }

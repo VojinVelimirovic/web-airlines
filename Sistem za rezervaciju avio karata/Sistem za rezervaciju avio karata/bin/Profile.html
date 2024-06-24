@@ -10,6 +10,7 @@
     <script>
         $(document).ready(function () {
             let allReservations = [];
+            let allFlights = [];
 
             function loadProfile() {
                 $.ajax({
@@ -36,6 +37,8 @@
 
                         if (user.userType === 'Traveler') {
                             allReservations = user.reservations;
+                            allFlights = extractFlightsFromReservations(allReservations);
+                            displayFlights(allFlights);
                             displayReservations(allReservations);
                         }
                     },
@@ -44,6 +47,43 @@
                         window.location.href = 'Login.html';
                     }
                 });
+            }
+
+            function extractFlightsFromReservations(reservations) {
+                const filteredReservations = reservations.filter(reservation =>
+                    reservation.status === 'Created' ||
+                    reservation.status === 'Approved' ||
+                    reservation.status === 'Completed'
+                );
+                const flights = filteredReservations.map(reservation => reservation.flight);
+                return flights;
+            }
+
+            function displayFlights(flights) {
+                $('#flightsSection').show();
+                const tableBody = $('#flightsBody');
+                tableBody.empty();
+
+                if (flights.length === 0) {
+                    tableBody.append('<tr><td colspan="9">No recorded flights</td></tr>');
+                } else {
+                    flights.forEach(function (flight) {
+                        const departureDate = new Date(flight.departureDateTime).toLocaleString();
+                        const arrivalDate = new Date(flight.arrivalDateTime).toLocaleString();
+                        const row = `<tr>
+                                    <td>${flight.id}</td>
+                                    <td>${flight.airline.name}</td>
+                                    <td>${flight.from} - ${flight.destination}</td>
+                                    <td>${departureDate}</td>
+                                    <td>${arrivalDate}</td>
+                                    <td>${flight.availableSeats}</td>
+                                    <td>${flight.bookedSeats}</td>
+                                    <td>${flight.price}</td>
+                                    <td>${flight.status}</td>
+                                </tr>`;
+                        tableBody.append(row);
+                    });
+                }
             }
 
             function displayReservations(reservations) {
@@ -62,17 +102,17 @@
                         const isWithin24Hours = new Date(flight.departureDateTime) - now <= 24 * 60 * 60 * 1000;
                         const isDisabled = reservation.status === 'Cancelled' || reservation.status === 'Completed' || isWithin24Hours;
                         const row = `<tr>
-                                <td><input type="checkbox" class="cancel-checkbox" data-reservation='${JSON.stringify(reservation)}' ${isDisabled ? 'disabled' : ''}></td>
-                                <td>${reservation.id}</td>
-                                <td>${reservation.user.username}</td>
-                                <td>${flight.id}</td>
-                                <td>${flight.from} - ${flight.destination}</td>
-                                <td>${departureDate}</td>
-                                <td>${arrivalDate}</td>
-                                <td>${reservation.numberOfPassengers}</td>
-                                <td>${reservation.totalPrice}</td>
-                                <td>${reservation.status}</td>
-                            </tr>`;
+                                    <td>${reservation.id}</td>
+                                    <td>${reservation.user.username}</td>
+                                    <td>${flight.id}</td>
+                                    <td>${flight.from} - ${flight.destination}</td>
+                                    <td>${departureDate}</td>
+                                    <td>${arrivalDate}</td>
+                                    <td>${reservation.numberOfPassengers}</td>
+                                    <td>${reservation.totalPrice}</td>
+                                    <td>${reservation.status}</td>
+                                    <td class="center-checkbox"><input type="checkbox" class="cancel-checkbox" data-reservation='${JSON.stringify(reservation)}' ${isDisabled ? 'disabled' : ''}></td>
+                                </tr>`;
                         tableBody.append(row);
                     });
 
@@ -192,11 +232,22 @@
                 const status = $('#filterStatus').val();
 
                 let filteredReservations = allReservations;
-                if (status !== '-') {
+                if (status !== 'All') {
                     filteredReservations = allReservations.filter(reservation => reservation.status === status);
                 }
 
                 displayReservations(filteredReservations);
+            });
+
+            $('#filterFlightBtn').click(function () {
+                const status = $('#filterFlightStatus').val();
+
+                let filteredFlights = allFlights;
+                if (status !== 'All') {
+                    filteredFlights = allFlights.filter(flight => flight.status === status);
+                }
+
+                displayFlights(filteredFlights);
             });
 
             $('#cancelReservationBtn').click(function () {
@@ -232,7 +283,7 @@
         <button id="editBtn" style="margin-left:10px;">Edit Profile</button>
     </div>
 
-    <div id="editProfileModal" style="display:none;">
+    <div id="editProfileModal" style="display:none; margin-left:20px;">
         <form id="editProfileForm">
             <label for="editUsername">Username:</label>
             <input type="text" id="editUsername" name="editUsername" required><br>
@@ -257,8 +308,43 @@
         </form>
     </div>
     <br />
+    <br />
+    <br />
+    <div id="flightsSection" style="display: none; margin-left: 20px; margin-right:20px;">
+        <h1>Your Flights</h1>
+        <div style="margin-left:20px;">
+            <label for="filterFlightStatus">Filter by Status:</label>
+            <select id="filterFlightStatus">
+                <option value="All">All</option>
+                <option value="Active">Active</option>
+                <option value="Cancelled">Cancelled</option>
+                <option value="Completed">Completed</option>
+            </select>
+            <button id="filterFlightBtn">Filter</button>
+        </div>
+        <br />
+        <table>
+            <thead>
+                <tr>
+                    <th>Flight ID</th>
+                    <th>Airline</th>
+                    <th>Route</th>
+                    <th>Departure Time</th>
+                    <th>Arrival Time</th>
+                    <th>Available Seats</th>
+                    <th>Booked Seats</th>
+                    <th>Price</th>
+                    <th>Status</th>
+                </tr>
+            </thead>
+            <tbody id="flightsBody"></tbody>
+        </table>
+    </div>
+    <br />
+    <br />
+    <br />
     <div id="reservationsSection" style="display: none; margin-left: 20px; margin-right:20px;">
-        <h1>Reservations</h1>
+        <h1>Your Reservations</h1>
         <div style="margin-left:20px;">
             <label for="filterStatus">Filter by Status:</label>
             <select id="filterStatus">
@@ -274,7 +360,6 @@
         <table id="reservationsTable">
             <thead>
                 <tr>
-                    <th>Cancel</th>
                     <th>Reservation Id</th>
                     <th>Name</th>
                     <th>Flight Id</th>
@@ -284,13 +369,20 @@
                     <th>Number of passengers</th>
                     <th>Total price (RSD)</th>
                     <th>Status</th>
+                    <th>Cancel</th>
                 </tr>
             </thead>
             <tbody id="reservationsBody">
             </tbody>
         </table>
         <br />
-        <button id="cancelReservationBtn" style="margin-left:20px;">Cancel Reservation</button>
+        <button id="cancelReservationBtn" style="margin-right:20px; float:right;">Cancel Reservation</button>
     </div>
+    <br />
+    <br />
+    <br />
+    <br />
+    <br />
+    <br />
 </body>
 </html>

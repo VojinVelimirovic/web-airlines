@@ -32,6 +32,9 @@ namespace Sistem_za_rezervaciju_avio_karata.Controllers
             reservation.User.Reservations.Clear();
             Reservations.AddReservation(reservation);
             var user = Users.FindByUsername(reservation.User.Username);
+            flight.AvailableSeats -= reservation.NumberOfPassengers;
+            flight.BookedSeats += reservation.NumberOfPassengers;
+            Flights.SaveFlights();
             if (user != null)
             {
                 if (user.Reservations == null)
@@ -41,9 +44,14 @@ namespace Sistem_za_rezervaciju_avio_karata.Controllers
                 user.Reservations.Add(reservation);
                 Users.SaveUsers();
             }
-            flight.AvailableSeats -= reservation.NumberOfPassengers;
-            flight.BookedSeats += reservation.NumberOfPassengers;
-            Flights.SaveFlights();
+            foreach (var res in Reservations.ReservationsList)
+            {
+                if (res.Flight.Id == flight.Id)
+                {
+                    res.Flight.AvailableSeats = flight.AvailableSeats;
+                    res.Flight.BookedSeats = flight.BookedSeats;
+                }
+            }
             Reservations.SaveReservations();
 
             return Ok();
@@ -79,8 +87,15 @@ namespace Sistem_za_rezervaciju_avio_karata.Controllers
                         {
                             flight.AvailableSeats += reservation.NumberOfPassengers;
                             flight.BookedSeats -= reservation.NumberOfPassengers;
-                            // Optionally, update reservation's flight reference (if needed)
                             reservation.Flight = flight;
+                            foreach (var res in Reservations.ReservationsList)
+                            {
+                                if (res.Flight.Id == flight.Id)
+                                {
+                                    res.Flight.AvailableSeats = flight.AvailableSeats;
+                                    res.Flight.BookedSeats = flight.BookedSeats;
+                                }
+                            }
                         }
                         else
                         {
@@ -112,8 +127,6 @@ namespace Sistem_za_rezervaciju_avio_karata.Controllers
                         return BadRequest($"Reservation with id {reservationtoCancel.Id} not found or already cancelled/completed.");
                     }
                 }
-
-                // Save changes to data sources
                 Users.SaveUsers();
                 Flights.SaveFlights();
                 Reservations.SaveReservations();
@@ -122,7 +135,6 @@ namespace Sistem_za_rezervaciju_avio_karata.Controllers
             }
             catch (Exception ex)
             {
-                // Log the exception
                 Console.WriteLine($"Exception occurred while cancelling reservations: {ex.Message}");
                 return InternalServerError();
             }

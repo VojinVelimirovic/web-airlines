@@ -5,6 +5,7 @@
     "ContactInfo": "tel 011 2094444",
     "Flights": [
       {
+        "Id": 1,
         "Airline": {
           "Name": "Nikola Tesla Airlines",
           "Address": "Aerodrom Beograd 59, Beograd 11180",
@@ -16,8 +17,8 @@
         "Destination": "Dubai",
         "DepartureDateTime": "2024-06-21T09:36:21.1064785+02:00",
         "ArrivalDateTime": "2024-06-21T09:36:21.1064785+02:00",
-        "AvailableSeats": 70,
-        "BookedSeats": 32,
+        "AvailableSeats": 100,
+        "BookedSeats": 0,
         "Price": 7000,
         "Status": "Active"
       }
@@ -30,6 +31,7 @@
     "ContactInfo": "tel +36 1 296 7000",
     "Flights": [
       {
+        "Id": 2,
         "Airline": {
           "Name": "Budapest Airlines",
           "Address": "Budapest, 1185 Hungary",
@@ -39,10 +41,10 @@
         },
         "From": "Budapest",
         "Destination": "New York",
-        "DepartureDateTime": "2024-06-21T09:36:21.1064785+02:00",
-        "ArrivalDateTime": "2024-06-21T09:36:21.1064785+02:00",
-        "AvailableSeats": 70,
-        "BookedSeats": 32,
+        "DepartureDateTime": "2024-06-21T12:30:21.1064785+02:00",
+        "ArrivalDateTime": "2024-06-21T20:00:21.1064785+02:00",
+        "AvailableSeats": 99,
+        "BookedSeats": 1,
         "Price": 7500,
         "Status": "Cancelled"
       }
@@ -55,6 +57,7 @@
     "ContactInfo": "tel +971 4 224 5555",
     "Flights": [
       {
+        "Id": 3,
         "Airline": {
           "Name": "Dubai Airlines",
           "Address": "Dubai - United Arab Emirates",
@@ -64,10 +67,10 @@
         },
         "From": "Dubai",
         "Destination": "Belgrade",
-        "DepartureDateTime": "2024-06-21T09:36:21.1064785+02:00",
-        "ArrivalDateTime": "2024-06-21T09:36:21.1064785+02:00",
-        "AvailableSeats": 70,
-        "BookedSeats": 32,
+        "DepartureDateTime": "2024-08-21T09:00:21.1064785+02:00",
+        "ArrivalDateTime": "2024-08-21T10:45:21.1064785+02:00",
+        "AvailableSeats": 100,
+        "BookedSeats": 0,
         "Price": 8000,
         "Status": "Active"
       }
