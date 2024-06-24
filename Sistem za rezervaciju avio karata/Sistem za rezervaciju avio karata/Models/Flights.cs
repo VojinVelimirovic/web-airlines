@@ -31,6 +31,14 @@ namespace Sistem_za_rezervaciju_avio_karata.Models
 
         public static Flight AddFlight(Flight flight)
         {
+            if (FlightsList == null || FlightsList.Count == 0)
+            {
+                flight.Id = 1;
+            }
+            else
+            {
+                flight.Id = FlightsList.Max(r => r.Id) + 1;
+            }
             FlightsList.Add(flight);
             Airline a = Airlines.FindAirline(flight.Airline.Name);
             a.AddFlight(flight);

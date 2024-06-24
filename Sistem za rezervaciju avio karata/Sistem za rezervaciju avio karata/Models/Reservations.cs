@@ -28,14 +28,23 @@ namespace Sistem_za_rezervaciju_avio_karata.Models
             File.WriteAllText(jsonFilePath, json);
         }
 
-        public static Reservation AddAirline(Reservation reservation)
+        public static Reservation AddReservation(Reservation reservation)
         {
+            if(ReservationsList == null || ReservationsList.Count == 0)
+            {
+                reservation.Id = 1;
+            }
+            else
+            {
+                reservation.Id = ReservationsList.Max(r => r.Id) + 1;
+            }
+            
             ReservationsList.Add(reservation);
             SaveReservations();
             return reservation;
         }
 
-        public static void RemoveAirline(Reservation reservation)
+        public static void RemoveReservation(Reservation reservation)
         {
             ReservationsList.Remove(reservation);
             SaveReservations();

@@ -9,7 +9,7 @@
     <link rel="stylesheet" href="MainStyle.css">
     <script>
         $(document).ready(function () {
-            let allReservations = []; // To store all reservations for filtering
+            let allReservations = [];
 
             function loadProfile() {
                 $.ajax({
@@ -35,8 +35,8 @@
                         $('input[name="editGender"][value="' + user.gender + '"]').prop('checked', true);
 
                         if (user.userType === 'Traveler') {
-                            allReservations = user.reservations; // Store all reservations
-                            displayReservations(allReservations); // Display all reservations initially
+                            allReservations = user.reservations;
+                            displayReservations(allReservations);
                         }
                     },
                     error: function (xhr) {
@@ -52,24 +52,52 @@
                 tableBody.empty();
 
                 if (reservations.length === 0) {
-                    tableBody.append('<tr><td colspan="7">No reservations made</td></tr>');
+                    tableBody.append('<tr><td colspan="10">No reservations made</td></tr>');
                 } else {
                     reservations.forEach(function (reservation) {
                         const flight = reservation.flight;
                         const departureDate = new Date(flight.departureDateTime).toLocaleString();
                         const arrivalDate = new Date(flight.arrivalDateTime).toLocaleString();
+                        const now = new Date();
+                        const isWithin24Hours = new Date(flight.departureDateTime) - now <= 24 * 60 * 60 * 1000;
+                        const isDisabled = reservation.status === 'Cancelled' || reservation.status === 'Completed' || isWithin24Hours;
                         const row = `<tr>
-                                        <td>${reservation.user.username}</td>
-                                        <td>${flight.from} - ${flight.destination}</td>
-                                        <td>${departureDate}</td>
-                                        <td>${arrivalDate}</td>
-                                        <td>${reservation.numberOfPassengers}</td>
-                                        <td>${reservation.totalPrice}</td>
-                                        <td>${reservation.status}</td>
-                                    </tr>`;
+                                <td><input type="checkbox" class="cancel-checkbox" data-reservation='${JSON.stringify(reservation)}' ${isDisabled ? 'disabled' : ''}></td>
+                                <td>${reservation.id}</td>
+                                <td>${reservation.user.username}</td>
+                                <td>${flight.id}</td>
+                                <td>${flight.from} - ${flight.destination}</td>
+                                <td>${departureDate}</td>
+                                <td>${arrivalDate}</td>
+                                <td>${reservation.numberOfPassengers}</td>
+                                <td>${reservation.totalPrice}</td>
+                                <td>${reservation.status}</td>
+                            </tr>`;
                         tableBody.append(row);
                     });
+
+                    $('#cancelReservationBtn').prop('disabled', true);
+                    $('.cancel-checkbox').change(function () {
+                        const anyChecked = $('.cancel-checkbox:checked').length > 0;
+                        $('#cancelReservationBtn').prop('disabled', !anyChecked);
+                    });
                 }
+            }
+
+            function updateReservations(reservationsToUpdate) {
+                $.ajax({
+                    url: '/api/reservations/cancel',
+                    method: 'POST',
+                    contentType: 'application/json',
+                    data: JSON.stringify(reservationsToUpdate),
+                    success: function (data) {
+                        console.log('Successful response:', data);
+                        loadProfile();
+                    },
+                    error: function (xhr) {
+                        console.error('Failed to cancel reservations:', xhr.responseText);
+                    }
+                });
             }
 
             loadProfile();
@@ -170,6 +198,18 @@
 
                 displayReservations(filteredReservations);
             });
+
+            $('#cancelReservationBtn').click(function () {
+                const reservationsToCancel = $('.cancel-checkbox:checked').map(function () {
+                    return JSON.parse($(this).attr('data-reservation'));
+                }).get();
+
+                reservationsToCancel.forEach(function (reservation) {
+                    reservation.status = 'Cancelled';
+                });
+
+                updateReservations(reservationsToCancel);
+            });
         });
     </script>
 </head>
@@ -216,7 +256,7 @@
             <button type="button" id="cancelEditBtn">Cancel</button>
         </form>
     </div>
-    <br/>
+    <br />
     <div id="reservationsSection" style="display: none; margin-left: 20px; margin-right:20px;">
         <h1>Reservations</h1>
         <div style="margin-left:20px;">
@@ -234,7 +274,10 @@
         <table id="reservationsTable">
             <thead>
                 <tr>
+                    <th>Cancel</th>
+                    <th>Reservation Id</th>
                     <th>Name</th>
+                    <th>Flight Id</th>
                     <th>Route</th>
                     <th>Departure</th>
                     <th>Arrival</th>
@@ -246,6 +289,8 @@
             <tbody id="reservationsBody">
             </tbody>
         </table>
+        <br />
+        <button id="cancelReservationBtn" style="margin-left:20px;">Cancel Reservation</button>
     </div>
 </body>
 </html>

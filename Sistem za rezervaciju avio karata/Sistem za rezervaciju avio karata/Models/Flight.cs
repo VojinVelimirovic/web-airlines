@@ -13,6 +13,7 @@ namespace Sistem_za_rezervaciju_avio_karata.Models
     }
     public class Flight
     {
+        public int Id { get; set; }
         public Airline Airline { get; set; }
         public string From { get; set; }
         public string Destination { get; set; }

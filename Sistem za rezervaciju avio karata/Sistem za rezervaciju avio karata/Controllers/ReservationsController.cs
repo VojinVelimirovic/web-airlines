@@ -18,12 +18,7 @@ namespace Sistem_za_rezervaciju_avio_karata.Controllers
             {
                 return BadRequest("Invalid reservation data.");
             }
-            var flight = Flights.FlightsList.FirstOrDefault(f =>
-                f.Airline.Name == reservation.Flight.Airline.Name &&
-                f.From == reservation.Flight.From &&
-                f.Destination == reservation.Flight.Destination &&
-                f.DepartureDateTime == reservation.Flight.DepartureDateTime
-            );
+            var flight = Flights.FlightsList.FirstOrDefault(f => f.Id == reservation.Flight.Id);
 
             if (flight == null)
             {
@@ -34,7 +29,8 @@ namespace Sistem_za_rezervaciju_avio_karata.Controllers
             {
                 return BadRequest("Not enough available seats.");
             }
-            Reservations.ReservationsList.Add(reservation);
+            reservation.User.Reservations.Clear();
+            Reservations.AddReservation(reservation);
             var user = Users.FindByUsername(reservation.User.Username);
             if (user != null)
             {
@@ -51,6 +47,85 @@ namespace Sistem_za_rezervaciju_avio_karata.Controllers
             Reservations.SaveReservations();
 
             return Ok();
+        }
+
+        [Route("api/reservations/cancel")]
+        public IHttpActionResult CancelReservations([FromBody] List<Reservation> reservationsToCancel)
+        {
+            if (reservationsToCancel == null || reservationsToCancel.Count == 0)
+            {
+                return BadRequest("No reservations to cancel.");
+            }
+
+            try
+            {
+                foreach (var reservationtoCancel in reservationsToCancel)
+                {
+                    var reservation = Reservations.ReservationsList.FirstOrDefault(r =>
+                        r.Id == reservationtoCancel.Id &&
+                        r.Status != ReservationStatus.Cancelled &&
+                        r.Status != ReservationStatus.Completed
+                    );
+
+                    if (reservation != null)
+                    {
+                        reservation.Status = ReservationStatus.Cancelled;
+
+                        var flight = Flights.FlightsList.FirstOrDefault(f =>
+                            f.Id == reservation.Flight.Id
+                        );
+
+                        if (flight != null)
+                        {
+                            flight.AvailableSeats += reservation.NumberOfPassengers;
+                            flight.BookedSeats -= reservation.NumberOfPassengers;
+                            // Optionally, update reservation's flight reference (if needed)
+                            reservation.Flight = flight;
+                        }
+                        else
+                        {
+                            return BadRequest("Flight associated with reservation not found.");
+                        }
+
+                        var user = Users.FindByUsername(reservation.User.Username);
+                        if (user != null)
+                        {
+                            var userReservation = user.Reservations.FirstOrDefault(r =>
+                                r.Id == reservationtoCancel.Id &&
+                                r.Status != ReservationStatus.Cancelled &&
+                                r.Status != ReservationStatus.Completed
+                            );
+
+                            if (userReservation != null)
+                            {
+                                userReservation.Status = ReservationStatus.Cancelled;
+                                userReservation.User.Reservations.Clear();
+                            }
+                        }
+                        else
+                        {
+                            return BadRequest("User associated with reservation not found.");
+                        }
+                    }
+                    else
+                    {
+                        return BadRequest($"Reservation with id {reservationtoCancel.Id} not found or already cancelled/completed.");
+                    }
+                }
+
+                // Save changes to data sources
+                Users.SaveUsers();
+                Flights.SaveFlights();
+                Reservations.SaveReservations();
+
+                return Ok("Reservations successfully cancelled.");
+            }
+            catch (Exception ex)
+            {
+                // Log the exception
+                Console.WriteLine($"Exception occurred while cancelling reservations: {ex.Message}");
+                return InternalServerError();
+            }
         }
     }
 }

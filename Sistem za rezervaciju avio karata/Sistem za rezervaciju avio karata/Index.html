@@ -122,19 +122,20 @@
 
                 let tableOfFlights = '<table border="1">';
                 if (currentUser && currentUser.userType === 'Traveler') {
-                    tableOfFlights += '<tr><th>Reserve</th><th>Airline</th><th>From</th><th>Destination</th><th>Departure time</th><th>Arrival time</th><th>Available seats</th><th>Booked seats</th><th>Price(RSD)</th><th>Status</th></tr>';
+                    tableOfFlights += '<tr><th>Reserve</th><th>Id</th><th>Airline</th><th>From</th><th>Destination</th><th>Departure time</th><th>Arrival time</th><th>Available seats</th><th>Booked seats</th><th>Price(RSD)</th><th>Status</th></tr>';
                 } else {
-                    tableOfFlights += '<tr><th>Airline</th><th>From</th><th>Destination</th><th>Departure time</th><th>Arrival time</th><th>Available seats</th><th>Booked seats</th><th>Price(RSD)</th><th>Status</th></tr>';
+                    tableOfFlights += '<tr><th>Id</th><th>Airline</th><th>From</th><th>Destination</th><th>Departure time</th><th>Arrival time</th><th>Available seats</th><th>Booked seats</th><th>Price(RSD)</th><th>Status</th></tr>';
                 }
 
                 if (activeFlights.length === 0) {
-                    tableOfFlights += '<tr><td colspan="10" style="font-size: 18px;">No active flights</td></tr>';
+                    tableOfFlights += '<tr><td colspan="11" style="font-size: 18px;">No active flights</td></tr>';
                 } else {
                     activeFlights.forEach(function (element) {
                         let flight = '<tr>';
                         if (currentUser && currentUser.userType === 'Traveler') {
                             flight += `<td class="center-radio"><input type="radio" name="reserve" class="reserve-flight" data-flight='${JSON.stringify(element)}'></td>`;
                         }
+                        flight += `<td>${element.id}</td>`;
                         flight += `<td><a href="#airlines" class="airline-name" data-airline='${JSON.stringify(element.airline)}'>${element.airline.name}</a></td>`;
                         flight += '<td>' + element.from + '</td>';
                         flight += '<td>' + element.destination + '</td>';
