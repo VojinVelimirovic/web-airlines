@@ -273,6 +273,20 @@
                     scrollTop: $('#reviewFormContainer').offset().top
                 }, 800);
             });
+
+            $('#reviewImage').change(function () {
+                const file = this.files[0];
+                if (file) {
+                    const reader = new FileReader();
+                    reader.onload = function (e) {
+                        $('#imagePreview').attr('src', e.target.result).show();
+                    };
+                    reader.readAsDataURL(file);
+                } else {
+                    $('#imagePreview').hide();
+                }
+            });
+
             $('#submitReviewBtn').click(function (event) {
                 event.preventDefault();
 
@@ -293,8 +307,15 @@
                 } else {
                     $('#reviewContentError').hide();
                 }
+
                 if (!reviewTitle || !reviewContent) {
                     return;
+                }
+
+                let reviewImage = 'None';
+                const file = $('#reviewImage')[0].files[0];
+                if (file) {
+                    reviewImage = '/images/' + file.name;
                 }
 
                 const reviewData = {
@@ -302,7 +323,8 @@
                     airline: flight.airline,
                     title: reviewTitle,
                     content: reviewContent,
-                    status: 'Approved'
+                    status: 'Approved',
+                    image: reviewImage
                 };
 
                 $.ajax({
@@ -317,6 +339,8 @@
                         $('#reviewFormContainer').hide();
                         $('#reviewTitle').val('');
                         $('#reviewContent').val('');
+                        $('#reviewImage').val('');
+                        $('#imagePreview').hide();
                         $('html, body').animate({
                             scrollTop: $('#flightsSection').offset().top
                         }, 800);
@@ -332,6 +356,8 @@
                 $('#reviewContent').val('');
                 $('#reviewTitleError').hide();
                 $('#reviewContentError').hide();
+                $('#reviewImage').val('');
+                $('#imagePreview').hide();
                 $('html, body').animate({
                     scrollTop: $('#flightsSection').offset().top
                 }, 800);
@@ -464,6 +490,9 @@
             <label for="reviewContent" style="margin-left:20px">Review Content:</label><br><br />
             <textarea id="reviewContent" name="content" rows="6" style="width: 400px; margin-left:20px;" required></textarea><br />
             <span id="reviewContentError" class="error" style="display: block; color: red; margin-left:20px;"></span><br />
+            <label for="reviewImage" style="margin-left:20px">Choose an Image:</label><br><br />
+            <input type="file" id="reviewImage" accept="image/*" style="margin-left:20px"><br />
+            <img id="imagePreview" style="margin-left:20px; display:none; max-width: 100px; max-height: 100px;" /><br />
             <button type="submit" id="submitReviewBtn" style="margin-left:20px">Submit Review</button>
             <button type="button" id="cancelReviewBtn">Cancel</button>
         </form>

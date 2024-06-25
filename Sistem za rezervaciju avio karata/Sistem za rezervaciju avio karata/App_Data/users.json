@@ -415,6 +415,42 @@
         "NumberOfPassengers": 5,
         "TotalPrice": 40000,
         "Status": 2
+      },
+      {
+        "Id": 15,
+        "User": {
+          "Username": "pera",
+          "Password": "pera",
+          "FirstName": "Petar",
+          "LastName": "Petrovic",
+          "Email": "pera@gmail.com",
+          "DateOfBirth": "18/01/2000",
+          "Gender": "Male",
+          "UserType": 0,
+          "Reservations": []
+        },
+        "Flight": {
+          "Id": 3,
+          "Airline": {
+            "Id": 3,
+            "Name": "Dubai Airlines",
+            "Address": "Dubai - United Arab Emirates",
+            "ContactInfo": "tel +971 4 224 5555",
+            "Flights": [],
+            "Reviews": []
+          },
+          "From": "Dubai",
+          "Destination": "Belgrade",
+          "DepartureDateTime": "2024-08-21T09:00:21.1064785+02:00",
+          "ArrivalDateTime": "2024-08-21T10:45:21.1064785+02:00",
+          "AvailableSeats": 98,
+          "BookedSeats": 2,
+          "Price": 8000,
+          "Status": "Active"
+        },
+        "NumberOfPassengers": 1,
+        "TotalPrice": 8000,
+        "Status": 2
       }
     ]
   },

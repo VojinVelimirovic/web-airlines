@@ -20,9 +20,10 @@
       "Flights": [],
       "Reviews": []
     },
-    "Title": "Great experience",
-    "Content": "Would recommend",
-    "Status": 1
+    "Title": "Wonderful experience",
+    "Content": "Would recommend.\nHonestly the service was wonderful.\nWill be using the next time I travel to Hungary.",
+    "Status": 1,
+    "Image": "None"
   },
   {
     "Id": 2,
@@ -45,8 +46,9 @@
       "Flights": [],
       "Reviews": []
     },
-    "Title": "Amazing service",
-    "Content": "I have nothing but praise for this Airline company. It was tidy and clean, the staff was polite and professional, even the passengers were well behaved. Glad I got to travel using the Budapest Airport.",
-    "Status": 1
+    "Title": "Still amazing!",
+    "Content": "I've come back to Hungary, and I still have nothing but praise for these Airlines. It was tidy and clean, the staff were polite and professional, even the passengers were well behaved. Will use again!",
+    "Status": 1,
+    "Image": "/images/budapest2.jpg"
   }
 ]

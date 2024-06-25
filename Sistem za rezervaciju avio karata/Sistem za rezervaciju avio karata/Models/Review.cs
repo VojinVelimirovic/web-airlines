@@ -17,5 +17,6 @@ namespace Sistem_za_rezervaciju_avio_karata.Models
         public string Title { get; set; }
         public string Content { get; set; }
         public ReviewStatus Status { get; set; }
+        public string Image { get; set; }
     }
 }
