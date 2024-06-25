@@ -170,7 +170,6 @@
             }
 
             function renderAirlinesTable(data) {
-                console.log("Rendering airlines table with data:", data);
 
                 let tableOfAirlines = '<table border="1">';
                 data.forEach(function (element) {
@@ -188,16 +187,13 @@
 
                 tableOfAirlines += '</table>';
                 $('#airlines').html(tableOfAirlines);
-                console.log("Airlines table HTML generated and inserted into #airlines");
 
                 $('.airline-row').click(function () {
                     const airlineData = $(this).data('airline');
-                    console.log("Clicked airline data:", airlineData);
 
                     const nextRow = $(this).next('.airline-details');
                     if (nextRow.length) {
                         nextRow.remove();
-                        console.log("Removed existing airline details row");
                     } else {
                         $(this).after(`<tr class="airline-details">
                 <td colspan="1">
@@ -208,41 +204,36 @@
                     </div>
                 </td>
             </tr>`);
-                        console.log("Inserted airline details row after clicked airline");
                     }
                 });
             }
 
             function renderReviews(reviews) {
-                console.log("Rendering reviews with data:", reviews);
 
                 if (!reviews || reviews.length === 0) {
-                    console.log("No reviews found or reviews array is empty");
                     return 'No reviews';
                 }
 
                 let approvedReviews = reviews.filter(review => review.status === 'Approved');
                 if (approvedReviews.length === 0) {
-                    console.log("No approved reviews found");
                     return 'No reviews';
                 }
 
-                let reviewsHtml = '<h3>Reviews:</h3>';
+                let reviewsHtml = '<h4>Reviews:</h4>';
                 approvedReviews.forEach(function (review) {
                     let imageHtml = '';
                     if (review.image !== 'None') {
-                        imageHtml = `<img src="${review.image}" alt="Review Image" style="float:left; width:150px; height:100px; border-style:solid; border-width:1px; margin-right:10px; margin-left:25px; margin-bottom:10px;">`;
+                        imageHtml = `<img src="${review.image}" alt="Review Image" style="float:left; width:150px; height:100px; border-style:solid; border-width:1px; margin-right:10px; margin-left:15px; margin-bottom:10px;">`;
                     }
 
-                    reviewsHtml += `<hr>
+                    reviewsHtml += `
+            <hr style="clear:both;">
             <div class="review">
                 <h3 style="margin-left:10px">${review.user.username} (${review.user.firstName} ${review.user.lastName}) - <i>${review.title}</i></h3>
                 ${imageHtml}
-                <p style="margin-left:25px; overflow:hidden;">${review.content}</p>
+                <p style="margin-left:185px; overflow:hidden; margin-right:185px">${review.content}</p>
             </div>`;
                 });
-
-                console.log("Generated reviews HTML:", reviewsHtml);
                 return reviewsHtml;
             }
 
