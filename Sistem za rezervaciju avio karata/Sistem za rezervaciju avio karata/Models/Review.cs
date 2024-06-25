@@ -11,6 +11,7 @@ namespace Sistem_za_rezervaciju_avio_karata.Models
     }
     public class Review
     {
+        public int Id { get; set; }
         public User User { get; set; }
         public Airline Airline { get; set; }
         public string Title { get; set; }

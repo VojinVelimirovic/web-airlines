@@ -202,19 +202,19 @@
 
             function renderReviews(reviews) {
                 if (!reviews || reviews.length === 0) {
-                    return '';
+                    return 'No reviews';
                 }
 
                 let approvedReviews = reviews.filter(review => review.status === 'Approved');
                 if (approvedReviews.length === 0) {
-                    return '';
+                    return 'No reviews';
                 }
 
                 let reviewsHtml = '<h3>Reviews:</h3>';
                 approvedReviews.forEach(function (review) {
-                    reviewsHtml += `<div class="review">
-                                <p><strong>Title:</strong> ${review.title}</p>
-                                <p>${review.content}</p>
+                    reviewsHtml += `<hr><div class="review">
+                                <h3 style="margin-left:10px">${review.user.username} (${review.user.firstName} ${review.user.lastName}) - <i>${review.title}</i></h3>
+                                <p style="margin-left:25px">${review.content}</p>
                             </div>`;
                 });
 

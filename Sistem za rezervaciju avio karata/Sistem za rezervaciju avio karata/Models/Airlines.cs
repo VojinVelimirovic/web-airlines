@@ -43,6 +43,14 @@ namespace Sistem_za_rezervaciju_avio_karata.Models
             {
                 airline.Flights = new List<Flight>();
             }
+            if (AirlinesList == null || AirlinesList.Count == 0)
+            {
+                airline.Id = 1;
+            }
+            else
+            {
+                airline.Id = AirlinesList.Max(r => r.Id) + 1;
+            }
             AirlinesList.Add(airline);
             SaveAirlines();
             return airline;

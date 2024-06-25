@@ -39,6 +39,7 @@ namespace Sistem_za_rezervaciju_avio_karata
             Flights.FlightsList = Flights.LoadFlights();
             Reservations.ReservationsList = Reservations.LoadReservations();
             Airlines.AirlinesList = Airlines.LoadAirlines();
+            Reviews.ReviewsList = Reviews.LoadReviews();
             UpdateStatuses();
         }
         private void UpdateStatuses()

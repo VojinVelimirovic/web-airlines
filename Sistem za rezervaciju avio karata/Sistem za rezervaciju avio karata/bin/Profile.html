@@ -9,14 +9,16 @@
     <link rel="stylesheet" href="MainStyle.css">
     <script>
         $(document).ready(function () {
-            let allReservations = [];
-            let allFlights = [];
+            let allUserReservations = [];
+            let allUserFlights = [];
+            let currentUser = null;
 
             function loadProfile() {
                 $.ajax({
                     url: '/api/users/currentuser',
                     method: 'GET',
                     success: function (user) {
+                        currentUser = user;
                         document.title = `${user.username}'s Profile`;
                         $('#profileTitle').text(`${user.username} (${user.firstName} ${user.lastName})`);
                         $('#email').text(`Email: ${user.email}`);
@@ -36,10 +38,10 @@
                         $('input[name="editGender"][value="' + user.gender + '"]').prop('checked', true);
 
                         if (user.userType === 'Traveler') {
-                            allReservations = user.reservations;
-                            allFlights = extractFlightsFromReservations(allReservations);
-                            displayFlights(allFlights);
-                            displayReservations(allReservations);
+                            allUserReservations = user.reservations;
+                            allUserFlights = extractFlightsFromReservations(allUserReservations);
+                            displayFlights(allUserFlights);
+                            displayReservations(allUserReservations);
                         }
                     },
                     error: function (xhr) {
@@ -70,6 +72,7 @@
                     flights.forEach(function (flight) {
                         const departureDate = new Date(flight.departureDateTime).toLocaleString();
                         const arrivalDate = new Date(flight.arrivalDateTime).toLocaleString();
+                        const reviewButton = flight.status === 'Completed' ? `<button class="reviewBtn" data-flight='${JSON.stringify(flight)}'>Review</button>` : `<button class="review-btn" disabled>Review</button>`;
                         const row = `<tr>
                                     <td>${flight.id}</td>
                                     <td>${flight.airline.name}</td>
@@ -80,6 +83,7 @@
                                     <td>${flight.bookedSeats}</td>
                                     <td>${flight.price}</td>
                                     <td>${flight.status}</td>
+                                    <td>${reviewButton}</td>
                                 </tr>`;
                         tableBody.append(row);
                     });
@@ -231,9 +235,9 @@
             $('#filterBtn').click(function () {
                 const status = $('#filterStatus').val();
 
-                let filteredReservations = allReservations;
+                let filteredReservations = allUserReservations;
                 if (status !== 'All') {
-                    filteredReservations = allReservations.filter(reservation => reservation.status === status);
+                    filteredReservations = allUserReservations.filter(reservation => reservation.status === status);
                 }
 
                 displayReservations(filteredReservations);
@@ -242,9 +246,9 @@
             $('#filterFlightBtn').click(function () {
                 const status = $('#filterFlightStatus').val();
 
-                let filteredFlights = allFlights;
+                let filteredFlights = allUserFlights;
                 if (status !== 'All') {
-                    filteredFlights = allFlights.filter(flight => flight.status === status);
+                    filteredFlights = allUserFlights.filter(flight => flight.status === status);
                 }
 
                 displayFlights(filteredFlights);
@@ -260,6 +264,77 @@
                 });
 
                 updateReservations(reservationsToCancel);
+            });
+            $(document).on('click', '.reviewBtn', function () {
+                const flight = JSON.parse($(this).attr('data-flight'));
+                $('#reviewFormContainer').show();
+                $('#submitReviewBtn').data('flight', flight);
+                $('html, body').animate({
+                    scrollTop: $('#reviewFormContainer').offset().top
+                }, 800);
+            });
+            $('#submitReviewBtn').click(function (event) {
+                event.preventDefault();
+
+                const reviewTitle = $('#reviewTitle').val();
+                const reviewContent = $('#reviewContent').val();
+                const flight = $(this).data('flight');
+
+                if (!reviewTitle) {
+                    $('#reviewTitleError').text('Title can\'t be left empty.');
+                    $('#reviewTitleError').show();
+                } else {
+                    $('#reviewTitleError').hide();
+                }
+
+                if (!reviewContent) {
+                    $('#reviewContentError').text('Content can\'t be left empty.');
+                    $('#reviewContentError').show();
+                } else {
+                    $('#reviewContentError').hide();
+                }
+                if (!reviewTitle || !reviewContent) {
+                    return;
+                }
+
+                const reviewData = {
+                    user: currentUser,
+                    airline: flight.airline,
+                    title: reviewTitle,
+                    content: reviewContent,
+                    status: 'Approved'
+                };
+
+                $.ajax({
+                    url: '/api/reviews/add',
+                    method: 'POST',
+                    contentType: 'application/json',
+                    data: JSON.stringify(reviewData),
+                    success: function (response) {
+                        console.log('Review submitted successfully:', response);
+                        $('#reviewFormContainer').hide();
+                        loadProfile();
+                        $('#reviewFormContainer').hide();
+                        $('#reviewTitle').val('');
+                        $('#reviewContent').val('');
+                        $('html, body').animate({
+                            scrollTop: $('#flightsSection').offset().top
+                        }, 800);
+                    },
+                    error: function (xhr) {
+                        console.error('Failed to submit review:', xhr.responseText);
+                    }
+                });
+            });
+            $('#cancelReviewBtn').click(function () {
+                $('#reviewFormContainer').hide();
+                $('#reviewTitle').val('');
+                $('#reviewContent').val('');
+                $('#reviewTitleError').hide();
+                $('#reviewContentError').hide();
+                $('html, body').animate({
+                    scrollTop: $('#flightsSection').offset().top
+                }, 800);
             });
         });
     </script>
@@ -335,6 +410,7 @@
                     <th>Booked Seats</th>
                     <th>Price</th>
                     <th>Status</th>
+                    <th>Review</th>
                 </tr>
             </thead>
             <tbody id="flightsBody"></tbody>
@@ -348,7 +424,7 @@
         <div style="margin-left:20px;">
             <label for="filterStatus">Filter by Status:</label>
             <select id="filterStatus">
-                <option value="-">All</option>
+                <option value="All">All</option>
                 <option value="Created">Created</option>
                 <option value="Approved">Approved</option>
                 <option value="Cancelled">Cancelled</option>
@@ -377,6 +453,20 @@
         </table>
         <br />
         <button id="cancelReservationBtn" style="margin-right:20px; float:right;">Cancel Reservation</button>
+    </div>
+    <br />
+    <div id="reviewFormContainer" style="display: none; margin-left: 20px; margin-right: 20px;">
+        <h1>Submit Review</h1>
+        <form id="reviewForm">
+            <label for="reviewTitle" style="margin-left:20px">Review Title:</label><br><br />
+            <input type="text" id="reviewTitle" name="title" style="margin-left:20px" required><br />
+            <span id="reviewTitleError" class="error" style="display: block; color: red; margin-left:20px;"></span><br />
+            <label for="reviewContent" style="margin-left:20px">Review Content:</label><br><br />
+            <textarea id="reviewContent" name="content" rows="6" style="width: 400px; margin-left:20px;" required></textarea><br />
+            <span id="reviewContentError" class="error" style="display: block; color: red; margin-left:20px;"></span><br />
+            <button type="submit" id="submitReviewBtn" style="margin-left:20px">Submit Review</button>
+            <button type="button" id="cancelReviewBtn">Cancel</button>
+        </form>
     </div>
     <br />
     <br />

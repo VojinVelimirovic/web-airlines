@@ -2,6 +2,7 @@
   {
     "Id": 1,
     "Airline": {
+      "Id": 1,
       "Name": "Nikola Tesla Airlines",
       "Address": "Aerodrom Beograd 59, Beograd 11180",
       "ContactInfo": "tel 011 2094444",
@@ -20,6 +21,7 @@
   {
     "Id": 2,
     "Airline": {
+      "Id": 2,
       "Name": "Budapest Airlines",
       "Address": "Budapest, 1185 Hungary",
       "ContactInfo": "tel +36 1 296 7000",
@@ -38,6 +40,7 @@
   {
     "Id": 3,
     "Airline": {
+      "Id": 3,
       "Name": "Dubai Airlines",
       "Address": "Dubai - United Arab Emirates",
       "ContactInfo": "tel +971 4 224 5555",

@@ -15,6 +15,7 @@
     "Flight": {
       "Id": 1,
       "Airline": {
+        "Id": 1,
         "Name": "Nikola Tesla Airlines",
         "Address": "Aerodrom Beograd 59, Beograd 11180",
         "ContactInfo": "tel 011 2094444",
@@ -50,6 +51,7 @@
     "Flight": {
       "Id": 1,
       "Airline": {
+        "Id": 1,
         "Name": "Nikola Tesla Airlines",
         "Address": "Aerodrom Beograd 59, Beograd 11180",
         "ContactInfo": "tel 011 2094444",
@@ -85,6 +87,7 @@
     "Flight": {
       "Id": 1,
       "Airline": {
+        "Id": 1,
         "Name": "Nikola Tesla Airlines",
         "Address": "Aerodrom Beograd 59, Beograd 11180",
         "ContactInfo": "tel 011 2094444",
@@ -120,6 +123,7 @@
     "Flight": {
       "Id": 1,
       "Airline": {
+        "Id": 1,
         "Name": "Nikola Tesla Airlines",
         "Address": "Aerodrom Beograd 59, Beograd 11180",
         "ContactInfo": "tel 011 2094444",
@@ -155,6 +159,7 @@
     "Flight": {
       "Id": 1,
       "Airline": {
+        "Id": 1,
         "Name": "Nikola Tesla Airlines",
         "Address": "Aerodrom Beograd 59, Beograd 11180",
         "ContactInfo": "tel 011 2094444",
@@ -190,6 +195,7 @@
     "Flight": {
       "Id": 1,
       "Airline": {
+        "Id": 1,
         "Name": "Nikola Tesla Airlines",
         "Address": "Aerodrom Beograd 59, Beograd 11180",
         "ContactInfo": "tel 011 2094444",
@@ -225,6 +231,7 @@
     "Flight": {
       "Id": 1,
       "Airline": {
+        "Id": 1,
         "Name": "Nikola Tesla Airlines",
         "Address": "Aerodrom Beograd 59, Beograd 11180",
         "ContactInfo": "tel 011 2094444",
@@ -260,6 +267,7 @@
     "Flight": {
       "Id": 1,
       "Airline": {
+        "Id": 1,
         "Name": "Nikola Tesla Airlines",
         "Address": "Aerodrom Beograd 59, Beograd 11180",
         "ContactInfo": "tel 011 2094444",
@@ -295,6 +303,7 @@
     "Flight": {
       "Id": 2,
       "Airline": {
+        "Id": 2,
         "Name": "Budapest Airlines",
         "Address": "Budapest, 1185 Hungary",
         "ContactInfo": "tel +36 1 296 7000",
@@ -330,6 +339,7 @@
     "Flight": {
       "Id": 3,
       "Airline": {
+        "Id": 3,
         "Name": "Dubai Airlines",
         "Address": "Dubai - United Arab Emirates",
         "ContactInfo": "tel +971 4 224 5555",
@@ -365,6 +375,7 @@
     "Flight": {
       "Id": 3,
       "Airline": {
+        "Id": 3,
         "Name": "Dubai Airlines",
         "Address": "Dubai - United Arab Emirates",
         "ContactInfo": "tel +971 4 224 5555",
@@ -382,6 +393,114 @@
     },
     "NumberOfPassengers": 1,
     "TotalPrice": 8000,
+    "Status": 2
+  },
+  {
+    "Id": 12,
+    "User": {
+      "Username": "pera",
+      "Password": "pera",
+      "FirstName": "Petar",
+      "LastName": "Petrovic",
+      "Email": "pera@gmail.com",
+      "DateOfBirth": "18/01/2000",
+      "Gender": "Male",
+      "UserType": 0,
+      "Reservations": []
+    },
+    "Flight": {
+      "Id": 3,
+      "Airline": {
+        "Id": 3,
+        "Name": "Dubai Airlines",
+        "Address": "Dubai - United Arab Emirates",
+        "ContactInfo": "tel +971 4 224 5555",
+        "Flights": [],
+        "Reviews": []
+      },
+      "From": "Dubai",
+      "Destination": "Belgrade",
+      "DepartureDateTime": "2024-08-21T09:00:21.1064785+02:00",
+      "ArrivalDateTime": "2024-08-21T10:45:21.1064785+02:00",
+      "AvailableSeats": 98,
+      "BookedSeats": 2,
+      "Price": 8000,
+      "Status": "Active"
+    },
+    "NumberOfPassengers": 6,
+    "TotalPrice": 48000,
+    "Status": 2
+  },
+  {
+    "Id": 13,
+    "User": {
+      "Username": "pera",
+      "Password": "pera",
+      "FirstName": "Petar",
+      "LastName": "Petrovic",
+      "Email": "pera@gmail.com",
+      "DateOfBirth": "18/01/2000",
+      "Gender": "Male",
+      "UserType": 0,
+      "Reservations": []
+    },
+    "Flight": {
+      "Id": 3,
+      "Airline": {
+        "Id": 3,
+        "Name": "Dubai Airlines",
+        "Address": "Dubai - United Arab Emirates",
+        "ContactInfo": "tel +971 4 224 5555",
+        "Flights": [],
+        "Reviews": []
+      },
+      "From": "Dubai",
+      "Destination": "Belgrade",
+      "DepartureDateTime": "2024-08-21T09:00:21.1064785+02:00",
+      "ArrivalDateTime": "2024-08-21T10:45:21.1064785+02:00",
+      "AvailableSeats": 98,
+      "BookedSeats": 2,
+      "Price": 8000,
+      "Status": "Active"
+    },
+    "NumberOfPassengers": 5,
+    "TotalPrice": 40000,
+    "Status": 2
+  },
+  {
+    "Id": 14,
+    "User": {
+      "Username": "pera",
+      "Password": "pera",
+      "FirstName": "Petar",
+      "LastName": "Petrovic",
+      "Email": "pera@gmail.com",
+      "DateOfBirth": "18/01/2000",
+      "Gender": "Male",
+      "UserType": 0,
+      "Reservations": []
+    },
+    "Flight": {
+      "Id": 3,
+      "Airline": {
+        "Id": 3,
+        "Name": "Dubai Airlines",
+        "Address": "Dubai - United Arab Emirates",
+        "ContactInfo": "tel +971 4 224 5555",
+        "Flights": [],
+        "Reviews": []
+      },
+      "From": "Dubai",
+      "Destination": "Belgrade",
+      "DepartureDateTime": "2024-08-21T09:00:21.1064785+02:00",
+      "ArrivalDateTime": "2024-08-21T10:45:21.1064785+02:00",
+      "AvailableSeats": 98,
+      "BookedSeats": 2,
+      "Price": 8000,
+      "Status": "Active"
+    },
+    "NumberOfPassengers": 5,
+    "TotalPrice": 40000,
     "Status": 2
   }
 ]

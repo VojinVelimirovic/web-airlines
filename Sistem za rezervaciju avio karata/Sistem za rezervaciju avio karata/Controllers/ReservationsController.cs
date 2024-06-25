@@ -42,6 +42,17 @@ namespace Sistem_za_rezervaciju_avio_karata.Controllers
                     user.Reservations = new List<Reservation>();
                 }
                 user.Reservations.Add(reservation);
+                foreach (var u in Users.UsersList)
+                {
+                    foreach (var res in u.Reservations)
+                    {
+                        if (res.Flight.Id == flight.Id)
+                        {
+                            res.Flight.AvailableSeats = flight.AvailableSeats;
+                            res.Flight.BookedSeats = flight.BookedSeats;
+                        }
+                    }
+                }
                 Users.SaveUsers();
             }
             foreach (var res in Reservations.ReservationsList)
@@ -101,7 +112,17 @@ namespace Sistem_za_rezervaciju_avio_karata.Controllers
                         {
                             return BadRequest("Flight associated with reservation not found.");
                         }
-
+                        foreach (var u in Users.UsersList)
+                        {
+                            foreach (var res in u.Reservations)
+                            {
+                                if (res.Flight.Id == flight.Id)
+                                {
+                                    res.Flight.AvailableSeats = flight.AvailableSeats;
+                                    res.Flight.BookedSeats = flight.BookedSeats;
+                                }
+                            }
+                        }
                         var user = Users.FindByUsername(reservation.User.Username);
                         if (user != null)
                         {
