@@ -13,6 +13,7 @@
             let allUserFlights = [];
             let currentUser = null;
             let allUsers = [];
+            let allReviews = [];
 
             function loadProfile() {
                 $.ajax({
@@ -40,6 +41,7 @@
 
                         if (user.userType === 'Admin') {
                             loadAllUsersTable();
+                            loadCreatedReviewsTable();
                         } else if (user.userType === 'Traveler') {
                             allUserReservations = user.reservations;
                             allUserFlights = extractFlightsFromReservations(allUserReservations);
@@ -326,7 +328,7 @@
                     airline: flight.airline,
                     title: reviewTitle,
                     content: reviewContent,
-                    status: 'Approved',
+                    status: 'Created',
                     image: reviewImage
                 };
 
@@ -452,6 +454,111 @@
 
                 displayUsers(filteredUsers);
             });
+            
+            function loadCreatedReviewsTable() {
+                $.ajax({
+                    url: '/api/reviews',
+                    method: 'GET',
+                    success: function (reviews) {
+                        allReviews = reviews;
+                        displayReviews(reviews);
+                        $('#createdReviews').show();
+                    },
+                    error: function (xhr) {
+                        console.error('Failed to load users:', xhr.responseText);
+                    }
+                });
+            }
+
+            function displayReviews(reviews){
+                const tableBody = $('#createdReviewsTableBody');
+                tableBody.empty();
+
+                let counter = 0;
+
+                if (reviews.length === 0) {
+                    tableBody.append('<tr><td colspan="9">No created reviews found</td></tr>');
+                } else {
+                    reviews.forEach(function (review) {
+                        if (review.status === 'Created') {
+                            counter += 1;
+                            let imageHtml = '';
+                            if (review.image !== 'None') {
+                                imageHtml = '<img src="' + review.image + '" alt="Review Image">';
+                            }
+                            let stringifiedReview = JSON.stringify(review)
+                                .replace("'", '&#39;')
+                                .replace("&", '&amp;')
+                                .replace("<", '&lt;')
+                                .replace(">", '&gt;');
+                            const row = `<tr>
+                    <td>${review.id}</td>
+                    <td>${review.user.username}</td>
+                    <td>${review.airline.name}</td>
+                    <td>${review.title}</td>
+                    <td>${review.content}</td>
+                    <td>${imageHtml}</td>
+                    <td>${review.status}</td>
+                    <td><button class="approveBtn" data-review='${stringifiedReview}'>Approve</button></td>
+                    <td><button class="rejectBtn" data-review='${stringifiedReview}'>Reject</button></td>
+                </tr>`;
+                            tableBody.append(row);
+                        }  
+                    });
+                    if (counter === 0) {
+                        tableBody.append('<tr><td colspan="9">No created reviews found</td></tr>');
+                    }
+                }
+            }
+
+            $(document).on('click', '.approveBtn', function () {
+                const review = JSON.parse($(this).attr('data-review'));
+                review.status = 'Approved';
+
+                let stringifiedReview = JSON.stringify(review)
+                    .replace("'", '&#39;')
+                    .replace("&", '&amp;')
+                    .replace("<", '&lt;')
+                    .replace(">", '&gt;');
+
+                $.ajax({
+                    url: 'api/reviews/update',
+                    method: 'POST',
+                    contentType: 'application/json',
+                    data: stringifiedReview,
+                    success: function () {
+                        loadCreatedReviewsTable();
+                    },
+                    error: function (xhr) {
+                        console.error('Failed to approve review:', xhr.responseText);
+                    }
+                });
+            });
+
+            $(document).on('click', '.rejectBtn', function () {
+                const review = JSON.parse($(this).attr('data-review'));
+                review.status = 'Rejected';
+
+                let stringifiedReview = JSON.stringify(review)
+                    .replace("'", '&#39;')
+                    .replace("&", '&amp;')
+                    .replace("<", '&lt;')
+                    .replace(">", '&gt;');
+
+                $.ajax({
+                    url: 'api/reviews/update',
+                    method: 'POST',
+                    contentType: 'application/json',
+                    data: stringifiedReview,
+                    success: function () {
+                        loadCreatedReviewsTable();
+                    },
+                    error: function (xhr) {
+                        console.error('Failed to approve review:', xhr.responseText);
+                    }
+                });
+            });
+
         });
     </script>
 </head>
@@ -629,6 +736,28 @@
                 </tr>
             </thead>
             <tbody id="adminUsersTableBody">
+            </tbody>
+        </table>
+    </div>
+    <div id="createdReviews" style="display: none; margin-left: 20px; margin-right:20px;">
+        <br />
+        <h1>Created reviews</h1>
+        <br />
+        <table id="createdReviewsTable">
+            <thead>
+                <tr>
+                    <th>Id</th>
+                    <th>User</th>
+                    <th>Airline</th>
+                    <th>Title</th>
+                    <th>Content</th>
+                    <th>Image</th>
+                    <th>Status</th>
+                    <th>Approve</th>
+                    <th>Reject</th>
+                </tr>
+            </thead>
+            <tbody id="createdReviewsTableBody">
             </tbody>
         </table>
     </div>

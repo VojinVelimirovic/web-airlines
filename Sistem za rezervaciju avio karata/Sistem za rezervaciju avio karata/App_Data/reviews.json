@@ -50,5 +50,83 @@
     "Content": "I've come back to Hungary, and I still have nothing but praise for these Airlines. It was tidy and clean, the staff were polite and professional, even the passengers were well behaved. Will use again!",
     "Status": 1,
     "Image": "/images/budapest2.jpg"
+  },
+  {
+    "Id": 3,
+    "User": {
+      "Username": "marko",
+      "Password": "marko",
+      "FirstName": "Marko",
+      "LastName": "Markovic",
+      "Email": "marko@gmail.com",
+      "DateOfBirth": "19/01/2000",
+      "Gender": "Male",
+      "UserType": 0,
+      "Reservations": []
+    },
+    "Airline": {
+      "Id": 2,
+      "Name": "Budapest Airlines",
+      "Address": "Budapest, 1185 Hungary",
+      "ContactInfo": "tel +36 1 296 7000",
+      "Flights": [],
+      "Reviews": []
+    },
+    "Title": "This review is a test",
+    "Content": "I hope the admin cancels this review.",
+    "Status": 2,
+    "Image": "None"
+  },
+  {
+    "Id": 4,
+    "User": {
+      "Username": "marko",
+      "Password": "marko",
+      "FirstName": "Marko",
+      "LastName": "Markovic",
+      "Email": "marko@gmail.com",
+      "DateOfBirth": "19/01/2000",
+      "Gender": "Male",
+      "UserType": 0,
+      "Reservations": []
+    },
+    "Airline": {
+      "Id": 2,
+      "Name": "Budapest Airlines",
+      "Address": "Budapest, 1185 Hungary",
+      "ContactInfo": "tel +36 1 296 7000",
+      "Flights": [],
+      "Reviews": []
+    },
+    "Title": "This review should get accepted",
+    "Content": "I hope you accept this view! I had a great time at the airport.",
+    "Status": 1,
+    "Image": "/images/budapest1.jpg"
+  },
+  {
+    "Id": 5,
+    "User": {
+      "Username": "marko",
+      "Password": "marko",
+      "FirstName": "Marko",
+      "LastName": "Markovic",
+      "Email": "marko@gmail.com",
+      "DateOfBirth": "19/01/2000",
+      "Gender": "Male",
+      "UserType": 0,
+      "Reservations": []
+    },
+    "Airline": {
+      "Id": 2,
+      "Name": "Budapest Airlines",
+      "Address": "Budapest, 1185 Hungary",
+      "ContactInfo": "tel +36 1 296 7000",
+      "Flights": [],
+      "Reviews": []
+    },
+    "Title": "Cancel this",
+    "Content": "Please cancel this review",
+    "Status": 2,
+    "Image": "None"
   }
 ]

@@ -209,77 +209,48 @@
             }
 
             function renderReviews(reviews) {
-
                 if (!reviews || reviews.length === 0) {
                     return 'No reviews';
                 }
 
-                let approvedReviews = reviews.filter(review => review.status === 'Approved');
-                if (approvedReviews.length === 0) {
+                let filteredReviews = [];
+
+                if (currentUser != null && currentUser.userType === 'Admin') {
+                    filteredReviews = reviews.filter(review => review.status === 'Approved' || review.status === 'Rejected');
+                } else {
+                    filteredReviews = reviews.filter(review => review.status === 'Approved');
+                }
+
+                if (filteredReviews.length === 0) {
                     return 'No reviews';
                 }
 
                 let reviewsHtml = '<h4>Reviews:</h4>';
-                approvedReviews.forEach(function (review) {
+                filteredReviews.forEach(function (review) {
                     let imageHtml = '';
                     if (review.image !== 'None') {
-                        imageHtml = `<img src="${review.image}" alt="Review Image" style="float:left; width:150px; height:100px; border-style:solid; border-width:1px; margin-right:10px; margin-left:15px; margin-bottom:10px;">`;
+                        imageHtml = `<img src="${review.image}" alt="Review Image" style="float:left; margin-right:10px; margin-left:15px; margin-bottom:10px;">`;
+                    }
+
+                    let reviewTitleHtml = review.title;
+                    let reviewStatusHtml = '';
+                    if (review.status === 'Rejected') {
+                        reviewTitleHtml = `<span style="text-decoration: line-through;">${review.user.username} (${review.user.firstName} ${review.user.lastName}) - <i>${review.title}</i></span>`;
+                        reviewStatusHtml = ' - Rejected';
                     }
 
                     reviewsHtml += `
-            <hr style="clear:both;">
-            <div class="review">
-                <h3 style="margin-left:10px">${review.user.username} (${review.user.firstName} ${review.user.lastName}) - <i>${review.title}</i></h3>
-                ${imageHtml}
-                <p style="margin-left:185px; overflow:hidden; margin-right:185px">${review.content}</p>
-            </div>`;
+        <hr style="clear:both;">
+        <div class="review">
+            <h3 style="margin-left:10px; color: ${review.status === 'Rejected' ? 'red' : 'inherit'};">${reviewTitleHtml}${reviewStatusHtml}
+            </h3>
+            ${imageHtml}
+            <p style="margin-left:185px; overflow:hidden; margin-right:185px; color: ${review.status === 'Rejected' ? 'red' : 'inherit'};">${review.content}</p>
+        </div>`;
                 });
+
                 return reviewsHtml;
             }
-
-            $('#sortSelect').change(function () {
-                let sortBy = $(this).val();
-
-                if (sortBy === 'asc') {
-                    flightsData.sort((a, b) => parseFloat(a.price) - parseFloat(b.price));
-                } else if (sortBy === 'desc') {
-                    flightsData.sort((a, b) => parseFloat(b.price) - parseFloat(a.price));
-                }
-
-                renderFlightsTable(flightsData);
-            });
-
-            $('#searchForm').submit(function (event) {
-                event.preventDefault();
-
-                let airlineName = $('#airlineName').val().trim().toLowerCase();
-                let from = $('#from').val().trim().toLowerCase();
-                let destination = $('#destination').val().trim().toLowerCase();
-                let departureDate = $('#departureDate').val();
-                let arrivalDate = $('#arrivalDate').val();
-
-                let filteredFlights = flightsData.filter(function (flight) {
-                    let matchAirline = airlineName === '' || flight.airline.name.toLowerCase().includes(airlineName);
-                    let matchFrom = from === '' || flight.from.toLowerCase().includes(from);
-                    let matchDestination = destination === '' || flight.destination.toLowerCase().includes(destination);
-
-                    let matchDepartureDate = true;
-                    if (departureDate !== '') {
-                        let flightDepartureDate = new Date(flight.departureDateTime).toISOString().split('T')[0];
-                        matchDepartureDate = flightDepartureDate === departureDate;
-                    }
-
-                    let matchArrivalDate = true;
-                    if (arrivalDate !== '') {
-                        let flightArrivalDate = new Date(flight.arrivalDateTime).toISOString().split('T')[0];
-                        matchArrivalDate = flightArrivalDate === arrivalDate;
-                    }
-
-                    return matchAirline && matchFrom && matchDestination && matchDepartureDate && matchArrivalDate && flight.status === 'Active';
-                });
-
-                renderFlightsTable(filteredFlights);
-            });
 
             $('#reservation-form').submit(function (event) {
                 event.preventDefault();
