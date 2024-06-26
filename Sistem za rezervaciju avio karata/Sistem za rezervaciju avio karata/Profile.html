@@ -12,6 +12,7 @@
             let allUserReservations = [];
             let allUserFlights = [];
             let currentUser = null;
+            let allUsers = [];
 
             function loadProfile() {
                 $.ajax({
@@ -37,7 +38,9 @@
                         $('#editDateOfBirth').val(user.dateOfBirth);
                         $('input[name="editGender"][value="' + user.gender + '"]').prop('checked', true);
 
-                        if (user.userType === 'Traveler') {
+                        if (user.userType === 'Admin') {
+                            loadAllUsersTable();
+                        } else if (user.userType === 'Traveler') {
                             allUserReservations = user.reservations;
                             allUserFlights = extractFlightsFromReservations(allUserReservations);
                             displayFlights(allUserFlights);
@@ -362,6 +365,93 @@
                     scrollTop: $('#flightsSection').offset().top
                 }, 800);
             });
+            function loadAllUsersTable() {
+                $.ajax({
+                    url: '/api/users',
+                    method: 'GET',
+                    success: function (users) {
+                        allUsers = users;
+                        displayUsers(users);
+                        $('#adminUsersTable').show();
+                    },
+                    error: function (xhr) {
+                        console.error('Failed to load users:', xhr.responseText);
+                    }
+                });
+            }
+
+            function displayUsers(users) {
+                const tableBody = $('#adminUsersTableBody');
+                tableBody.empty();
+
+                if (users.length === 0) {
+                    tableBody.append('<tr><td colspan="7">No users found</td></tr>');
+                } else {
+                    users.forEach(function (user) {
+                        const row = `<tr>
+                    <td>${user.username}</td>
+                    <td>${user.firstName}</td>
+                    <td>${user.lastName}</td>
+                    <td>${user.email}</td>
+                    <td>${user.dateOfBirth}</td>
+                    <td>${user.gender}</td>
+                    <td>${user.userType}</td>
+                </tr>`;
+                        tableBody.append(row);
+                    });
+                }
+            }
+            function sortUsers(criteria) {
+                switch (criteria) {
+                    case 'firstName_ASC':
+                        allUsers.sort((a, b) => a.firstName.localeCompare(b.firstName));
+                        break;
+                    case 'firstName_DESC':
+                        allUsers.sort((a, b) => b.firstName.localeCompare(a.firstName));
+                        break;
+                    case 'dateOfBirth_ASC':
+                        allUsers.sort(function (a, b) {
+                            aArr = a.dateOfBirth.split('/');
+                            bArr = b.dateOfBirth.split('/');
+                            return new Date(aArr[2], Number(aArr[1]) - 1, aArr[0]).getTime() - new Date(bArr[2], Number(bArr[1]) - 1, bArr[0]).getTime()
+                        });
+                        break;
+                    case 'dateOfBirth_DESC':
+                        allUsers.sort(function (a, b) {
+                            aArr = a.dateOfBirth.split('/');
+                            bArr = b.dateOfBirth.split('/');
+                            return new Date(bArr[2], Number(bArr[1]) - 1, bArr[0]).getTime() - new Date(aArr[2], Number(aArr[1]) - 1, aArr[0]).getTime()
+                        });
+                        break;
+                }
+
+                displayUsers(allUsers);
+            }
+            $('#sortUsersBy').change(function () {
+                const selectedCriteria = $('#sortUsersBy').val();
+                sortUsers(selectedCriteria);
+            });
+            $('#searchForm').submit(function (event) {
+                event.preventDefault();
+
+                let firstName = $('#firstName').val().trim().toLowerCase();
+                let lastName = $('#lastName').val().trim().toLowerCase();
+                let fromDate = $('#departureDate').val();
+                let toDate = $('#arrivalDate').val();
+                let filteredUsers = allUsers.filter(function (user) {
+                    let userArr = user.dateOfBirth.split('/');
+                    let userDate = new Date(userArr[2], Number(userArr[1]) - 1, userArr[0]);
+                    let matchFirstName = firstName === '' || user.firstName.toLowerCase().includes(firstName);
+                    let matchLastName = lastName === '' || user.lastName.toLowerCase().includes(lastName);
+                    let matchBirthDate = true;
+                    //if (fromDate !== "" || toDate !== "") {
+                    //    matchBirthDate = userDate >= fromDate && userDate <= toDate;
+                    //}
+                    return matchFirstName && matchLastName && matchBirthDate;
+                });
+
+                displayUsers(filteredUsers);
+            });
         });
     </script>
 </head>
@@ -408,10 +498,10 @@
             <button type="button" id="cancelEditBtn">Cancel</button>
         </form>
     </div>
-    <br />
-    <br />
-    <br />
     <div id="flightsSection" style="display: none; margin-left: 20px; margin-right:20px;">
+        <br />
+        <br />
+        <br />
         <h1>Your Flights</h1>
         <div style="margin-left:20px;">
             <label for="filterFlightStatus">Filter by Status:</label>
@@ -442,10 +532,10 @@
             <tbody id="flightsBody"></tbody>
         </table>
     </div>
-    <br />
-    <br />
-    <br />
     <div id="reservationsSection" style="display: none; margin-left: 20px; margin-right:20px;">
+        <br />
+        <br />
+        <br />
         <h1>Your Reservations</h1>
         <div style="margin-left:20px;">
             <label for="filterStatus">Filter by Status:</label>
@@ -480,8 +570,8 @@
         <br />
         <button id="cancelReservationBtn" style="margin-right:20px; float:right;">Cancel Reservation</button>
     </div>
-    <br />
     <div id="reviewFormContainer" style="display: none; margin-left: 20px; margin-right: 20px;">
+        <br />
         <h1>Submit Review</h1>
         <form id="reviewForm">
             <label for="reviewTitle" style="margin-left:20px">Review Title:</label><br><br />
@@ -497,11 +587,61 @@
             <button type="button" id="cancelReviewBtn">Cancel</button>
         </form>
     </div>
+    <div id="adminUsersTable" style="display: none; margin-left: 20px; margin-right:20px;">
+        <br />
+        <br />
+        <br />
+        <h1>Registered Users</h1>
+        <br />
+        <div>
+            <form id="searchForm" class="search">
+                <label for="firstName">First name:</label>
+                <input type="text" id="firstName" class="input-field">
+                <label for="lastName">Last name:</label>
+                <input type="text" id="lastName" class="input-field">
+                <label for="bornFrom">Born from:</label>
+                <input type="text" id="bornFrom" class="datepicker">
+                <label for="bornTo">Born to:</label>
+                <input type="text" id="bornTo" class="datepicker">
+                <input type="submit" value="Search">
+            </form>
+            <div style="float:right;">
+                <label for="sortUsersBy">Sort by:</label>
+                <select id="sortUsersBy" class="sort">
+                    <option value="firstName_ASC">First Name (Ascending)</option>
+                    <option value="firstName_DESC">First Name (Descending)</option>
+                    <option value="dateOfBirth_ASC">Date of Birth (Ascending)</option>
+                    <option value="dateOfBirth_DESC">Date of Birth (Descending)</option>
+                </select>
+            </div>
+        </div>
+        <br />
+        <table id="adminUsersTable">
+            <thead>
+                <tr>
+                    <th>Username</th>
+                    <th>First Name</th>
+                    <th>Last Name</th>
+                    <th>Email</th>
+                    <th>Date of Birth</th>
+                    <th>Gender</th>
+                    <th>User Type</th>
+                </tr>
+            </thead>
+            <tbody id="adminUsersTableBody">
+            </tbody>
+        </table>
+    </div>
     <br />
     <br />
     <br />
     <br />
     <br />
     <br />
+    <script>
+        $(function () {
+            $(".datepicker").datepicker({ dateFormat: 'dd/mm/yy' });
+        });
+    </script>
 </body>
 </html>
