@@ -17,6 +17,7 @@
       "Name": "Budapest Airlines",
       "Address": "Budapest, 1185 Hungary",
       "ContactInfo": "tel +36 1 296 7000",
+      "IsDeleted": false,
       "Flights": [],
       "Reviews": []
     },
@@ -43,6 +44,7 @@
       "Name": "Budapest Airlines",
       "Address": "Budapest, 1185 Hungary",
       "ContactInfo": "tel +36 1 296 7000",
+      "IsDeleted": false,
       "Flights": [],
       "Reviews": []
     },
@@ -69,6 +71,7 @@
       "Name": "Budapest Airlines",
       "Address": "Budapest, 1185 Hungary",
       "ContactInfo": "tel +36 1 296 7000",
+      "IsDeleted": false,
       "Flights": [],
       "Reviews": []
     },
@@ -95,6 +98,7 @@
       "Name": "Budapest Airlines",
       "Address": "Budapest, 1185 Hungary",
       "ContactInfo": "tel +36 1 296 7000",
+      "IsDeleted": false,
       "Flights": [],
       "Reviews": []
     },
@@ -121,6 +125,7 @@
       "Name": "Budapest Airlines",
       "Address": "Budapest, 1185 Hungary",
       "ContactInfo": "tel +36 1 296 7000",
+      "IsDeleted": false,
       "Flights": [],
       "Reviews": []
     },

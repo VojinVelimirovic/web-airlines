@@ -14,6 +14,7 @@
             let currentUser = null;
             let allUsers = [];
             let allReviews = [];
+            let allAirlines = [];
 
             function loadProfile() {
                 $.ajax({
@@ -42,6 +43,7 @@
                         if (user.userType === 'Admin') {
                             loadAllUsersTable();
                             loadCreatedReviewsTable();
+                            loadAllAirlines();
                         } else if (user.userType === 'Traveler') {
                             allUserReservations = user.reservations;
                             allUserFlights = extractFlightsFromReservations(allUserReservations);
@@ -559,6 +561,218 @@
                 });
             });
 
+            function loadAllAirlines() {
+                $.ajax({
+                    url: '/api/airlines',
+                    method: 'GET',
+                    success: function (airlines) {
+                        allAirlines = airlines;
+                        displayAirlines(airlines);
+                        $('#adminAirlinesSection').show();
+                    },
+                    error: function (xhr) {
+                        console.error('Failed to load users:', xhr.responseText);
+                    }
+                });
+            }
+
+            function displayAirlines(airlines) {
+                const tableBody = $('#allAirlinesTableBody');
+                tableBody.empty();
+
+                let counter = 0;
+
+                if (airlines.length === 0) {
+                    tableBody.append('<tr><td colspan="9">No airlines found</td></tr>');
+                } else {
+                    airlines.forEach(function (airline) {
+                        if (!airline.isDeleted) {
+                            counter += 1;
+                            let stringifiedAirline = JSON.stringify(airline)
+                                .replace("'", '&#39;')
+                                .replace("&", '&amp;')
+                                .replace("<", '&lt;')
+                                .replace(">", '&gt;');
+                            let hasActiveFlight = false;
+                            airline.flights.forEach(function (flight) {
+                                if (flight.status === 'Active') {
+                                    hasActiveFlight = true;
+                                }
+                            });
+                            
+                            let removeBtn = `<td><button class="removeAirlineBtn" data-airline='${stringifiedAirline}'>Remove</button></td>`
+                            if (hasActiveFlight) {
+                                removeBtn = `<td><button class="removeAirlineBtn" data-airline='${stringifiedAirline}' disabled>Remove</button></td>`
+                            }
+                            const row = `<tr>
+                    <td>${airline.id}</td>
+                    <td>${airline.name}</td>
+                    <td>${airline.address}</td>
+                    <td>${airline.contactInfo}</td>
+                    ${removeBtn}
+                    <td><button class="editAirlineBtn" data-airline='${stringifiedAirline}'>Edit</button></td>
+                </tr>`;
+                            tableBody.append(row);
+                        }
+                    });
+                    if (counter === 0) {
+                        tableBody.append('<tr><td colspan="6">No  airlines found</td></tr>');
+                    }
+                }
+            }
+            $(document).on('click', '.removeAirlineBtn', function () {
+                const airline = JSON.parse($(this).attr('data-airline'));
+
+                let stringifiedAirline = JSON.stringify(airline)
+                    .replace("'", '&#39;')
+                    .replace("&", '&amp;')
+                    .replace("<", '&lt;')
+                    .replace(">", '&gt;');
+
+                $.ajax({
+                    url: 'api/airlines/remove',
+                    method: 'POST',
+                    contentType: 'application/json',
+                    data: stringifiedAirline,
+                    success: function () {
+                        loadAllAirlines();
+                    },
+                    error: function (xhr) {
+                        console.error('Failed to remove airline:', xhr.responseText);
+                    }
+                });
+            });
+
+            $('#addAirlineBtn').click(function (event) {
+                event.preventDefault();
+
+                const airlineName = $('#airlineName').val();
+                const airlineAddress = $('#airlineAddress').val();
+                const airlineContact = $('#airlineContact').val();
+
+                let shouldReturn = false;
+
+                if (!airlineName) {
+                    $('#airlineNameError').text('Name can\'t be left empty.');
+                    $('#airlineNameError').show();
+                    shouldReturn = true;
+                } else {
+                    $('#airlineNameError').hide();
+                }
+
+                if (!airlineAddress) {
+                    $('#airlineAddressError').text('Address can\'t be left empty.');
+                    $('#airlineAddressError').show();
+                    shouldReturn = true;
+                } else {
+                    $('#airlineAddressError').hide();
+                }
+
+                if (!airlineContact) {
+                    $('#airlineContactError').text('Contact info can\'t be left empty.');
+                    $('#airlineContactError').show();
+                    shouldReturn = true;
+                } else {
+                    $('#airlineContactError').hide();
+                }
+
+                if (shouldReturn) {
+                    return;
+                }
+
+                const airlineData = {
+                    name: airlineName,
+                    address: airlineAddress,
+                    contactInfo: airlineContact
+                };
+
+                let stringifiedAirline = JSON.stringify(airlineData)
+                    .replace("'", '&#39;')
+                    .replace("&", '&amp;')
+                    .replace("<", '&lt;')
+                    .replace(">", '&gt;');
+
+                $.ajax({
+                    url: '/api/airlines/add',
+                    method: 'POST',
+                    contentType: 'application/json',
+                    data: stringifiedAirline,
+                    success: function (response) {
+                        console.log('Review submitted successfully:', response);
+                        $('#airlineName').val('');
+                        $('#airlineAddress').val('');
+                        $('#airlineContact').val('');
+                        loadAllAirlines();
+                    },
+                    error: function (xhr) {
+                        console.error('Failed to submit review:', xhr.responseText);
+                    }
+                });
+            });
+
+            $('#searchFormAirlines').submit(function (event) {
+                event.preventDefault();
+
+                let airlineName = $('#searchAirlineName').val().trim().toLowerCase();
+                let airlineAddress = $('#searchAirlineAddress').val().trim().toLowerCase();
+                let airlineContact = $('#searchAirlineContact').val().trim().toLowerCase();
+                let filteredAirlines = allAirlines.filter(function (airline) {
+                    let matchAirlineName = airlineName === '' || airline.name.toLowerCase().includes(airlineName);
+                    let matchAirlineAddress = airlineAddress === '' || airline.address.toLowerCase().includes(airlineAddress);
+                    let matchAirlineContact = airlineContact === '' || airline.contactInfo.toLowerCase().includes(airlineContact);
+                    return matchAirlineName && matchAirlineAddress && matchAirlineContact;
+                });
+
+                displayAirlines(filteredAirlines);
+            });
+            $(document).on('click', '.editAirlineBtn', function () {
+                const airline = JSON.parse($(this).attr('data-airline'));
+                $('#editAirlineId').val(airline.id);
+                $('#editAirlineName').val(airline.name);
+                $('#editAirlineAddress').val(airline.address);
+                $('#editAirlineContact').val(airline.contactInfo);
+                $('#editAirlineModal').show();
+            });
+
+            $('#editAirlineForm').submit(function (event) {
+                event.preventDefault();
+
+                const airlineData = {
+                    id: $('#editAirlineId').val(),
+                    name: $('#editAirlineName').val(),
+                    address: $('#editAirlineAddress').val(),
+                    contactInfo: $('#editAirlineContact').val()
+                };
+
+                let stringifiedAirline = JSON.stringify(airlineData)
+                    .replace("'", '&#39;')
+                    .replace("&", '&amp;')
+                    .replace("<", '&lt;')
+                    .replace(">", '&gt;');
+
+                $.ajax({
+                    url: '/api/airlines/update',
+                    method: 'POST',
+                    contentType: 'application/json',
+                    data: stringifiedAirline,
+                    success: function (response) {
+                        console.log('Airline updated successfully:', response);
+                        $('#editAirlineModal').hide();
+                        loadAllAirlines();
+                    },
+                    error: function (xhr) {
+                        console.error('Failed to update airline:', xhr.responseText);
+                    }
+                });
+            });
+
+            $('#cancelEditAirline').click(function () {
+                $('#editAirlineName').val('');
+                $('#editAirlineAddress').val('');
+                $('#editAirlineContact').val('');
+                $('#editAirlineModal').hide();
+            });
+
         });
     </script>
 </head>
@@ -736,6 +950,68 @@
                 </tr>
             </thead>
             <tbody id="adminUsersTableBody">
+            </tbody>
+        </table>
+    </div>
+    <div id="adminAirlinesSection" style="display: none; margin-left: 20px; margin-right:20px;">
+        <br />
+        <h1>Add airline</h1>
+        <br />
+        <form id="addAirlineForm">
+            <label for="airlineName" style="margin-left:20px">Airline Name:</label><br />
+            <input type="text" id="airlineName" name="name" style="margin-left:20px" required><br />
+            <span id="airlineNameError" class="error" style="display: block; color: red; margin-left:20px;"></span><br />
+            <label for="airlineAddress" style="margin-left:20px">Airline Address:</label><br />
+            <input type="text" id="airlineAddress" name="address" style="margin-left:20px" required><br />
+            <span id="airlineAddressError" class="error" style="display: block; color: red; margin-left:20px;"></span><br />
+            <label for="airlineContact" style="margin-left:20px">Airline Contact info:</label><br />
+            <input type="text" id="airlineContact" name="contact" style="margin-left:20px" required><br />
+            <span id="airlineContactError" class="error" style="display: block; color: red; margin-left:20px;"></span><br />
+            <button type="submit" id="addAirlineBtn" style="margin-left:20px">Add airline</button>
+        </form>
+        <br />
+        <div id="editAirlineModal" style="display:none;">
+            <h1>Edit Airline</h1>
+            <br />
+            <form id="editAirlineForm">
+                <input type="hidden" id="editAirlineId">
+                <label for="editAirlineName" style="margin-left:20px">Name:</label><br>
+                <input type="text" id="editAirlineName" style="margin-left:20px" required><br>
+                <label for="editAirlineAddress" style="margin-left:20px">Address:</label><br>
+                <input type="text" id="editAirlineAddress" style="margin-left:20px" required><br>
+                <label for="editAirlineContact" style="margin-left:20px">Contact Info:</label><br>
+                <input type="text" id="editAirlineContact" style="margin-left:20px" required><br>
+                <button type="submit" style="margin-left:20px">Save</button>
+                <button type="button" id="cancelEditAirline" style="margin-left:20px">Cancel</button>
+            </form>
+        </div>
+        <br />
+        <h1>All airlines</h1>
+        <br />
+        <div>
+            <form id="searchFormAirlines" class="search">
+                <label for="searchAirlineName">Airline name:</label>
+                <input type="text" id="searchAirlineName" class="input-field">
+                <label for="searchAirlineAddress">Airline address:</label>
+                <input type="text" id="searchAirlineAddress" class="input-field">
+                <label for="searchAirlineContact">Airline contact:</label>
+                <input type="text" id="searchAirlineContact" class="input-field">
+                <input type="submit" value="Search">
+            </form>
+        </div>
+        <br />
+        <table id="allAirlinesTable">
+            <thead>
+                <tr>
+                    <th>Id</th>
+                    <th>Name</th>
+                    <th>Address</th>
+                    <th>Contact</th>
+                    <th>Delete</th>
+                    <th>Edit</th>
+                </tr>
+            </thead>
+            <tbody id="allAirlinesTableBody">
             </tbody>
         </table>
     </div>

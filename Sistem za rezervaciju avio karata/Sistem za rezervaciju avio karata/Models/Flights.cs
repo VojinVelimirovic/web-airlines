@@ -40,7 +40,7 @@ namespace Sistem_za_rezervaciju_avio_karata.Models
                 flight.Id = FlightsList.Max(r => r.Id) + 1;
             }
             FlightsList.Add(flight);
-            Airline a = Airlines.FindAirline(flight.Airline.Name);
+            Airline a = Airlines.FindAirline(flight.Airline.Id);
             a.AddFlight(flight);
             SaveFlights();
             return flight;
@@ -49,7 +49,7 @@ namespace Sistem_za_rezervaciju_avio_karata.Models
         public static void RemoveFlight(Flight flight)
         {
             FlightsList.Remove(flight);
-            Airline a = Airlines.FindAirline(flight.Airline.Name);
+            Airline a = Airlines.FindAirline(flight.Airline.Id);
             a.RemoveFlight(flight);
             SaveFlights();
         }

@@ -110,10 +110,12 @@
                     text: 'All'
                 }));
                 airlines.forEach(function (airline) {
-                    select.append($('<option>', {
-                        value: airline.name,
-                        text: airline.name
-                    }));
+                    if (!airline.isDeleted) {
+                        select.append($('<option>', {
+                            value: airline.name,
+                            text: airline.name
+                        }));
+                    }
                 });
             }
 
@@ -170,19 +172,20 @@
             }
 
             function renderAirlinesTable(data) {
-
                 let tableOfAirlines = '<table border="1">';
                 data.forEach(function (element) {
-                    let airlineDataAttr = JSON.stringify(element)
-                        .replace("'", '&#39;')
-                        .replace("&", '&amp;')
-                        .replace("<", '&lt;')
-                        .replace(">", '&gt;');
+                    if (!element.isDeleted) {
+                        let airlineDataAttr = JSON.stringify(element)
+                            .replace("'", '&#39;')
+                            .replace("&", '&amp;')
+                            .replace("<", '&lt;')
+                            .replace(">", '&gt;');
 
-                    let airline = `<tr class="airline-row" data-airline='${airlineDataAttr}'>
-            <td><h2 style="margin: 0;" class="airline-name">${element.name}</h2></td>
-        </tr>`;
-                    tableOfAirlines += airline;
+                        let airline = `<tr class="airline-row" data-airline='${airlineDataAttr}'>
+                <td><h2 style="margin: 0;" class="airline-name">${element.name}</h2></td>
+            </tr>`;
+                        tableOfAirlines += airline;
+                    }
                 });
 
                 tableOfAirlines += '</table>';

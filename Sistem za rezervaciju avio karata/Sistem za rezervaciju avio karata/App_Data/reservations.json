@@ -19,6 +19,7 @@
         "Name": "Nikola Tesla Airlines",
         "Address": "Aerodrom Beograd 59, Beograd 11180",
         "ContactInfo": "tel 011 2094444",
+        "IsDeleted": false,
         "Flights": [],
         "Reviews": []
       },
@@ -55,6 +56,7 @@
         "Name": "Nikola Tesla Airlines",
         "Address": "Aerodrom Beograd 59, Beograd 11180",
         "ContactInfo": "tel 011 2094444",
+        "IsDeleted": false,
         "Flights": [],
         "Reviews": []
       },
@@ -91,6 +93,7 @@
         "Name": "Nikola Tesla Airlines",
         "Address": "Aerodrom Beograd 59, Beograd 11180",
         "ContactInfo": "tel 011 2094444",
+        "IsDeleted": false,
         "Flights": [],
         "Reviews": []
       },
@@ -127,6 +130,7 @@
         "Name": "Nikola Tesla Airlines",
         "Address": "Aerodrom Beograd 59, Beograd 11180",
         "ContactInfo": "tel 011 2094444",
+        "IsDeleted": false,
         "Flights": [],
         "Reviews": []
       },
@@ -163,6 +167,7 @@
         "Name": "Nikola Tesla Airlines",
         "Address": "Aerodrom Beograd 59, Beograd 11180",
         "ContactInfo": "tel 011 2094444",
+        "IsDeleted": false,
         "Flights": [],
         "Reviews": []
       },
@@ -199,6 +204,7 @@
         "Name": "Nikola Tesla Airlines",
         "Address": "Aerodrom Beograd 59, Beograd 11180",
         "ContactInfo": "tel 011 2094444",
+        "IsDeleted": false,
         "Flights": [],
         "Reviews": []
       },
@@ -235,6 +241,7 @@
         "Name": "Nikola Tesla Airlines",
         "Address": "Aerodrom Beograd 59, Beograd 11180",
         "ContactInfo": "tel 011 2094444",
+        "IsDeleted": false,
         "Flights": [],
         "Reviews": []
       },
@@ -271,6 +278,7 @@
         "Name": "Nikola Tesla Airlines",
         "Address": "Aerodrom Beograd 59, Beograd 11180",
         "ContactInfo": "tel 011 2094444",
+        "IsDeleted": false,
         "Flights": [],
         "Reviews": []
       },
@@ -307,6 +315,7 @@
         "Name": "Budapest Airlines",
         "Address": "Budapest, 1185 Hungary",
         "ContactInfo": "tel +36 1 296 7000",
+        "IsDeleted": false,
         "Flights": [],
         "Reviews": []
       },
@@ -343,6 +352,7 @@
         "Name": "Dubai Airlines",
         "Address": "Dubai - United Arab Emirates",
         "ContactInfo": "tel +971 4 224 5555",
+        "IsDeleted": false,
         "Flights": [],
         "Reviews": []
       },
@@ -379,6 +389,7 @@
         "Name": "Dubai Airlines",
         "Address": "Dubai - United Arab Emirates",
         "ContactInfo": "tel +971 4 224 5555",
+        "IsDeleted": false,
         "Flights": [],
         "Reviews": []
       },
@@ -415,6 +426,7 @@
         "Name": "Dubai Airlines",
         "Address": "Dubai - United Arab Emirates",
         "ContactInfo": "tel +971 4 224 5555",
+        "IsDeleted": false,
         "Flights": [],
         "Reviews": []
       },
@@ -451,6 +463,7 @@
         "Name": "Dubai Airlines",
         "Address": "Dubai - United Arab Emirates",
         "ContactInfo": "tel +971 4 224 5555",
+        "IsDeleted": false,
         "Flights": [],
         "Reviews": []
       },
@@ -487,6 +500,7 @@
         "Name": "Dubai Airlines",
         "Address": "Dubai - United Arab Emirates",
         "ContactInfo": "tel +971 4 224 5555",
+        "IsDeleted": false,
         "Flights": [],
         "Reviews": []
       },
@@ -523,6 +537,7 @@
         "Name": "Dubai Airlines",
         "Address": "Dubai - United Arab Emirates",
         "ContactInfo": "tel +971 4 224 5555",
+        "IsDeleted": false,
         "Flights": [],
         "Reviews": []
       },

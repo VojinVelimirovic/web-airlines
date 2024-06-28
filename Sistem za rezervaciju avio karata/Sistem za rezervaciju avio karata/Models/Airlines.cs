@@ -28,9 +28,9 @@ namespace Sistem_za_rezervaciju_avio_karata.Models
             File.WriteAllText(jsonFilePath, json);
         }
 
-        public static Airline FindAirline(string airlineName)
+        public static Airline FindAirline(int airlineId)
         {
-            return AirlinesList.FirstOrDefault(a => a.Name == airlineName);
+            return AirlinesList.FirstOrDefault(a => a.Id == airlineId);
         }
 
         public static Airline AddAirline(Airline airline)
@@ -51,15 +51,122 @@ namespace Sistem_za_rezervaciju_avio_karata.Models
             {
                 airline.Id = AirlinesList.Max(r => r.Id) + 1;
             }
+            airline.IsDeleted = false;
             AirlinesList.Add(airline);
             SaveAirlines();
             return airline;
         }
 
-        public static void RemoveAirline(Airline airline)
+        public static void RemoveAirline(Airline air)
         {
-            AirlinesList.Remove(airline);
-            SaveAirlines();
+            var airline = Airlines.AirlinesList.FirstOrDefault(a => a.Id == air.Id);
+            if (airline == null)
+            {
+                throw new Exception("Airline not found");
+            }
+            airline.IsDeleted = true;
+            foreach (var flight in airline.Flights)
+            {
+                flight.Airline.IsDeleted = true;
+            }
+            foreach (var reservation in Reservations.ReservationsList)
+            {
+                if (reservation.Flight.Airline.Id == air.Id)
+                {
+                    reservation.Flight.Airline.IsDeleted = true;
+                }
+            }
+            foreach (var flight in Flights.FlightsList)
+            {
+                if (flight.Airline.Id == air.Id)
+                {
+                    flight.Airline.IsDeleted = true;
+                }
+            }
+            foreach (var review in Reviews.ReviewsList)
+            {
+                if (review.Airline.Id == air.Id)
+                {
+                    review.Airline.IsDeleted = true;
+                }
+            }
+            foreach (var user in Users.UsersList)
+            {
+                foreach (var reservation in user.Reservations)
+                {
+                    if (reservation.Flight.Airline.Id == air.Id)
+                    {
+                        reservation.Flight.Airline.IsDeleted = true;
+                    }
+                }
+            }
+            Airlines.SaveAirlines();
+            Reservations.SaveReservations();
+            Flights.SaveFlights();
+            Reviews.SaveReviews();
+            Users.SaveUsers();
+        }
+
+        public static void UpdateAirline(Airline air)
+        {
+            var airline = Airlines.AirlinesList.FirstOrDefault(a => a.Id == air.Id);
+            if (airline == null)
+            {
+                throw new Exception("Airline not found");
+            }
+            airline.Name = air.Name;
+            airline.Address = air.Address;
+            airline.ContactInfo = air.ContactInfo;
+            foreach (var flight in airline.Flights)
+            {
+                flight.Airline.Name = air.Name;
+                flight.Airline.Address = air.Address;
+                flight.Airline.ContactInfo = air.ContactInfo;
+            }
+            foreach (var reservation in Reservations.ReservationsList)
+            {
+                if (reservation.Flight.Airline.Id == air.Id)
+                {
+                    reservation.Flight.Airline.Name = air.Name;
+                    reservation.Flight.Airline.Address = air.Address;
+                    reservation.Flight.Airline.ContactInfo = air.ContactInfo;
+                }
+            }
+            foreach (var flight in Flights.FlightsList)
+            {
+                if (flight.Airline.Id == air.Id)
+                {
+                    flight.Airline.Name = air.Name;
+                    flight.Airline.Address = air.Address;
+                    flight.Airline.ContactInfo = air.ContactInfo;
+                }
+            }
+            foreach (var review in Reviews.ReviewsList)
+            {
+                if (review.Airline.Id == air.Id)
+                {
+                    review.Airline.Name = air.Name;
+                    review.Airline.Address = air.Address;
+                    review.Airline.ContactInfo = air.ContactInfo;
+                }
+            }
+            foreach (var user in Users.UsersList)
+            {
+                foreach (var reservation in user.Reservations)
+                {
+                    if (reservation.Flight.Airline.Id == air.Id)
+                    {
+                        reservation.Flight.Airline.Name = air.Name;
+                        reservation.Flight.Airline.Address = air.Address;
+                        reservation.Flight.Airline.ContactInfo = air.ContactInfo;
+                    }
+                }
+            }
+            Airlines.SaveAirlines();
+            Reservations.SaveReservations();
+            Flights.SaveFlights();
+            Reviews.SaveReviews();
+            Users.SaveUsers();
         }
     }
 }

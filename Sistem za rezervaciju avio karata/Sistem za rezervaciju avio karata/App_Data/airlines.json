@@ -4,6 +4,7 @@
     "Name": "Nikola Tesla Airlines",
     "Address": "Aerodrom Beograd 59, Beograd 11180",
     "ContactInfo": "tel 011 2094444",
+    "IsDeleted": false,
     "Flights": [
       {
         "Id": 1,
@@ -12,6 +13,7 @@
           "Name": "Nikola Tesla Airlines",
           "Address": "Aerodrom Beograd 59, Beograd 11180",
           "ContactInfo": "tel 011 2094444",
+          "IsDeleted": false,
           "Flights": [],
           "Reviews": []
         },
@@ -32,6 +34,7 @@
     "Name": "Budapest Airlines",
     "Address": "Budapest, 1185 Hungary",
     "ContactInfo": "tel +36 1 296 7000",
+    "IsDeleted": false,
     "Flights": [
       {
         "Id": 2,
@@ -40,6 +43,7 @@
           "Name": "Budapest Airlines",
           "Address": "Budapest, 1185 Hungary",
           "ContactInfo": "tel +36 1 296 7000",
+          "IsDeleted": false,
           "Flights": [],
           "Reviews": []
         },
@@ -72,6 +76,7 @@
           "Name": "Budapest Airlines",
           "Address": "Budapest, 1185 Hungary",
           "ContactInfo": "tel +36 1 296 7000",
+          "IsDeleted": false,
           "Flights": [],
           "Reviews": []
         },
@@ -98,6 +103,7 @@
           "Name": "Budapest Airlines",
           "Address": "Budapest, 1185 Hungary",
           "ContactInfo": "tel +36 1 296 7000",
+          "IsDeleted": false,
           "Flights": [],
           "Reviews": []
         },
@@ -124,6 +130,7 @@
           "Name": "Budapest Airlines",
           "Address": "Budapest, 1185 Hungary",
           "ContactInfo": "tel +36 1 296 7000",
+          "IsDeleted": false,
           "Flights": [],
           "Reviews": []
         },
@@ -150,6 +157,7 @@
           "Name": "Budapest Airlines",
           "Address": "Budapest, 1185 Hungary",
           "ContactInfo": "tel +36 1 296 7000",
+          "IsDeleted": false,
           "Flights": [],
           "Reviews": []
         },
@@ -176,6 +184,7 @@
           "Name": "Budapest Airlines",
           "Address": "Budapest, 1185 Hungary",
           "ContactInfo": "tel +36 1 296 7000",
+          "IsDeleted": false,
           "Flights": [],
           "Reviews": []
         },
@@ -191,6 +200,7 @@
     "Name": "Dubai Airlines",
     "Address": "Dubai - United Arab Emirates",
     "ContactInfo": "tel +971 4 224 5555",
+    "IsDeleted": false,
     "Flights": [
       {
         "Id": 3,
@@ -199,6 +209,7 @@
           "Name": "Dubai Airlines",
           "Address": "Dubai - United Arab Emirates",
           "ContactInfo": "tel +971 4 224 5555",
+          "IsDeleted": false,
           "Flights": [],
           "Reviews": []
         },
@@ -212,6 +223,33 @@
         "Status": "Active"
       }
     ],
+    "Reviews": []
+  },
+  {
+    "Id": 4,
+    "Name": "American Airlines",
+    "Address": "Fort Worth, Texas, United States",
+    "ContactInfo": "tel 800-433-7300",
+    "IsDeleted": true,
+    "Flights": [],
+    "Reviews": []
+  },
+  {
+    "Id": 5,
+    "Name": "American Airlines",
+    "Address": "Texas, USA",
+    "ContactInfo": "",
+    "IsDeleted": true,
+    "Flights": [],
+    "Reviews": []
+  },
+  {
+    "Id": 6,
+    "Name": "American Airlines",
+    "Address": "Texas, USA",
+    "ContactInfo": "tel 800-433-7300",
+    "IsDeleted": true,
+    "Flights": [],
     "Reviews": []
   }
 ]
