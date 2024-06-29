@@ -10,6 +10,7 @@
     <script type="text/javascript">
         $(document).ready(function () {
             let flightsData = [];
+            let flightsFiltered = [];
             let currentUser = null;
             let selectedFlight = null;
 
@@ -80,6 +81,7 @@
                     method: "GET",
                     success: function (data) {
                         flightsData = data;
+                        flightsFiltered = data;
                         renderFlightsTable(data);
                     },
                     error: function () {
@@ -291,6 +293,49 @@
             $(function () {
                 $(".datepicker").datepicker({ dateFormat: 'yy-mm-dd' });
             });
+
+            $('#sortSelect').change(function () {
+                let sortBy = $(this).val();
+
+                if (sortBy === 'asc') {
+                    flightsFiltered.sort((a, b) => parseFloat(a.price) - parseFloat(b.price));
+                } else if (sortBy === 'desc') {
+                    flightsFiltered.sort((a, b) => parseFloat(b.price) - parseFloat(a.price));
+                }
+                renderFlightsTable(flightsFiltered);
+            });
+            $('#searchForm').submit(function (event) {
+                event.preventDefault();
+
+                let airlineName = $('#airlineName').val().trim().toLowerCase();
+                let from = $('#from').val().trim().toLowerCase();
+                let destination = $('#destination').val().trim().toLowerCase();
+                let departureDate = $('#departureDate').val();
+                let arrivalDate = $('#arrivalDate').val();
+
+                let filteredFlights = flightsData.filter(function (flight) {
+                    let matchAirline = airlineName === '' || flight.airline.name.toLowerCase().includes(airlineName);
+                    let matchFrom = from === '' || flight.from.toLowerCase().includes(from);
+                    let matchDestination = destination === '' || flight.destination.toLowerCase().includes(destination);
+
+                    let matchDepartureDate = true;
+                    if (departureDate !== '') {
+                        let flightDepartureDate = new Date(flight.departureDateTime).toISOString().split('T')[0];
+                        matchDepartureDate = flightDepartureDate === departureDate;
+                    }
+
+                    let matchArrivalDate = true;
+                    if (arrivalDate !== '') {
+                        let flightArrivalDate = new Date(flight.arrivalDateTime).toISOString().split('T')[0];
+                        matchArrivalDate = flightArrivalDate === arrivalDate;
+                    }
+
+                    return matchAirline && matchFrom && matchDestination && matchDepartureDate && matchArrivalDate && flight.status === 'Active';
+                });
+                flightsFiltered = filteredFlights;
+                renderFlightsTable(filteredFlights);
+            });
+
         });
     </script>
 </head>
@@ -343,10 +388,5 @@
     <br />
     <br />
     <br />
-    <script>
-        $(function () {
-            $(".datepicker").datepicker({ dateFormat: ' yy-mm-dd ' });
-        });
-    </script>
 </body>
 </html>

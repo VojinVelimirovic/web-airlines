@@ -13,8 +13,10 @@
             let allUserFlights = [];
             let currentUser = null;
             let allUsers = [];
+            let allUsersFiltered = [];
             let allReviews = [];
             let allAirlines = [];
+            let allReservations = [];
 
             function loadProfile() {
                 $.ajax({
@@ -44,6 +46,7 @@
                             loadAllUsersTable();
                             loadCreatedReviewsTable();
                             loadAllAirlines();
+                            loadAllReservations();
                         } else if (user.userType === 'Traveler') {
                             allUserReservations = user.reservations;
                             allUserFlights = extractFlightsFromReservations(allUserReservations);
@@ -375,6 +378,7 @@
                     method: 'GET',
                     success: function (users) {
                         allUsers = users;
+                        allUsersFiltered = users;
                         displayUsers(users);
                         $('#adminUsersTable').show();
                     },
@@ -408,20 +412,20 @@
             function sortUsers(criteria) {
                 switch (criteria) {
                     case 'firstName_ASC':
-                        allUsers.sort((a, b) => a.firstName.localeCompare(b.firstName));
+                        allUsersFiltered.sort((a, b) => a.firstName.localeCompare(b.firstName));
                         break;
                     case 'firstName_DESC':
-                        allUsers.sort((a, b) => b.firstName.localeCompare(a.firstName));
+                        allUsersFiltered.sort((a, b) => b.firstName.localeCompare(a.firstName));
                         break;
                     case 'dateOfBirth_ASC':
-                        allUsers.sort(function (a, b) {
+                        allUsersFiltered.sort(function (a, b) {
                             aArr = a.dateOfBirth.split('/');
                             bArr = b.dateOfBirth.split('/');
                             return new Date(aArr[2], Number(aArr[1]) - 1, aArr[0]).getTime() - new Date(bArr[2], Number(bArr[1]) - 1, bArr[0]).getTime()
                         });
                         break;
                     case 'dateOfBirth_DESC':
-                        allUsers.sort(function (a, b) {
+                        allUsersFiltered.sort(function (a, b) {
                             aArr = a.dateOfBirth.split('/');
                             bArr = b.dateOfBirth.split('/');
                             return new Date(bArr[2], Number(bArr[1]) - 1, bArr[0]).getTime() - new Date(aArr[2], Number(aArr[1]) - 1, aArr[0]).getTime()
@@ -429,7 +433,7 @@
                         break;
                 }
 
-                displayUsers(allUsers);
+                displayUsers(allUsersFiltered);
             }
             $('#sortUsersBy').change(function () {
                 const selectedCriteria = $('#sortUsersBy').val();
@@ -440,23 +444,31 @@
 
                 let firstName = $('#firstName').val().trim().toLowerCase();
                 let lastName = $('#lastName').val().trim().toLowerCase();
-                let fromDate = $('#departureDate').val();
-                let toDate = $('#arrivalDate').val();
+                let fromDateStr = $('#bornFrom').val();
+                let fromDateArr = fromDateStr.split('/');
+                let fromDate = new Date(fromDateArr[2], Number(fromDateArr[1]) - 1, fromDateArr[0]);
+                let toDateStr = $('#bornTo').val();
+                let toDateArr = toDateStr.split('/');
+                let toDate = new Date(toDateArr[2], Number(toDateArr[1]) - 1, toDateArr[0]);
                 let filteredUsers = allUsers.filter(function (user) {
                     let userArr = user.dateOfBirth.split('/');
                     let userDate = new Date(userArr[2], Number(userArr[1]) - 1, userArr[0]);
                     let matchFirstName = firstName === '' || user.firstName.toLowerCase().includes(firstName);
                     let matchLastName = lastName === '' || user.lastName.toLowerCase().includes(lastName);
                     let matchBirthDate = true;
-                    //if (fromDate !== "" || toDate !== "") {
-                    //    matchBirthDate = userDate >= fromDate && userDate <= toDate;
-                    //}
+                    if (fromDateStr !== "" && toDateStr !== "") {
+                        matchBirthDate = userDate >= fromDate && userDate <= toDate;
+                    }
                     return matchFirstName && matchLastName && matchBirthDate;
                 });
-
+                allUsersFiltered = filteredUsers;
                 displayUsers(filteredUsers);
             });
-            
+
+            $(function () {
+                $(".datepicker").datepicker({ dateFormat: 'dd/mm/yy' });
+            });
+
             function loadCreatedReviewsTable() {
                 $.ajax({
                     url: '/api/reviews',
@@ -467,7 +479,7 @@
                         $('#createdReviews').show();
                     },
                     error: function (xhr) {
-                        console.error('Failed to load users:', xhr.responseText);
+                        console.error('Failed to load reviews:', xhr.responseText);
                     }
                 });
             }
@@ -571,7 +583,7 @@
                         $('#adminAirlinesSection').show();
                     },
                     error: function (xhr) {
-                        console.error('Failed to load users:', xhr.responseText);
+                        console.error('Failed to load airlines:', xhr.responseText);
                     }
                 });
             }
@@ -773,6 +785,102 @@
                 $('#editAirlineModal').hide();
             });
 
+            function loadAllReservations() {
+                $.ajax({
+                    url: '/api/reservations/get',
+                    method: 'GET',
+                    success: function (reservations) {
+                        allReservations = reservations;
+                        displayAllReservations(reservations);
+                        $('#allReservations').show();
+                    },
+                    error: function (xhr) {
+                        console.error('Failed to load reservations:', xhr.responseText);
+                    }
+                });
+            }
+
+            function displayAllReservations(reservations) {
+                const tableBody = $('#allReservationsTableBody');
+                tableBody.empty();
+
+                if (reservations.length === 0) {
+                    tableBody.append('<tr><td colspan="9">No users found</td></tr>');
+                } else {
+                    reservations.forEach(function (reservation) {
+                        let stringifiedReservation = JSON.stringify(reservation)
+                            .replace("'", '&#39;')
+                            .replace("&", '&amp;')
+                            .replace("<", '&lt;')
+                            .replace(">", '&gt;');
+                        let route = `${reservation.flight.from} - ${reservation.flight.destination}`;
+                        let disabledPortion = 'disabled';
+                        if (reservation.status === 'Created') {
+                            disabledPortion = '';
+                        }
+                        let approveReservationBtn = `<td><button class="approveReservationBtn" data-reservation='${stringifiedReservation}' ${disabledPortion}>Approve</button></td>`;
+                        let cancelReservationBtn = `<td><button class="cancelReservationBtn" data-reservation='${stringifiedReservation}' ${disabledPortion}>Cancel</button></td>`;
+                        const row = `<tr>
+                    <td>${reservation.id}</td>
+                    <td>${reservation.user.username}</td>
+                    <td>${reservation.flight.id}</td>
+                    <td>${route}</td>
+                    <td>${reservation.numberOfPassengers}</td>
+                    <td>${reservation.totalPrice}</td>
+                    <td>${reservation.status}</td>
+                    ${approveReservationBtn}
+                    ${cancelReservationBtn}
+                </tr>`;
+                        tableBody.append(row);
+                    });
+                }
+            }
+            $(document).on('click', '.approveReservationBtn', function () {
+                const reservation = JSON.parse($(this).attr('data-reservation'));
+                reservation.status = 'Approved';
+
+                let stringifiedReservation = JSON.stringify(reservation)
+                    .replace("'", '&#39;')
+                    .replace("&", '&amp;')
+                    .replace("<", '&lt;')
+                    .replace(">", '&gt;');
+
+                $.ajax({
+                    url: 'api/reservations/change',
+                    method: 'POST',
+                    contentType: 'application/json',
+                    data: stringifiedReservation,
+                    success: function () {
+                        loadAllReservations();
+                    },
+                    error: function (xhr) {
+                        console.error('Failed to approve reservation:', xhr.responseText);
+                    }
+                });
+            });
+            $(document).on('click', '.cancelReservationBtn', function () {
+                const reservation = JSON.parse($(this).attr('data-reservation'));
+                reservation.status = 'Cancelled';
+
+                let stringifiedReservation = JSON.stringify(reservation)
+                    .replace("'", '&#39;')
+                    .replace("&", '&amp;')
+                    .replace("<", '&lt;')
+                    .replace(">", '&gt;');
+
+                $.ajax({
+                    url: 'api/reservations/change',
+                    method: 'POST',
+                    contentType: 'application/json',
+                    data: stringifiedReservation,
+                    success: function () {
+                        loadAllReservations();
+                    },
+                    error: function (xhr) {
+                        console.error('Failed to approve reservation:', xhr.responseText);
+                    }
+                });
+            });
         });
     </script>
 </head>
@@ -1015,6 +1123,28 @@
             </tbody>
         </table>
     </div>
+    <div id="allReservations" style="display: none; margin-left: 20px; margin-right:20px;">
+        <br />
+        <h1>All reservations</h1>
+        <br />
+        <table id="allReservationsTable">
+            <thead>
+                <tr>
+                    <th>Id</th>
+                    <th>User</th>
+                    <th>Flight</th>
+                    <th>Route</th>
+                    <th>Number of passengers</th>
+                    <th>Total price</th>
+                    <th>Status</th>
+                    <th>Approve</th>
+                    <th>Cancel</th>
+                </tr>
+            </thead>
+            <tbody id="allReservationsTableBody">
+            </tbody>
+        </table>
+    </div>
     <div id="createdReviews" style="display: none; margin-left: 20px; margin-right:20px;">
         <br />
         <h1>Created reviews</h1>
@@ -1043,10 +1173,5 @@
     <br />
     <br />
     <br />
-    <script>
-        $(function () {
-            $(".datepicker").datepicker({ dateFormat: 'dd/mm/yy' });
-        });
-    </script>
 </body>
 </html>

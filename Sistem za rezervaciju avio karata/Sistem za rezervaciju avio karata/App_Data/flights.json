@@ -54,8 +54,8 @@
     "Destination": "Belgrade",
     "DepartureDateTime": "2024-08-21T09:00:21.1064785+02:00",
     "ArrivalDateTime": "2024-08-21T10:45:21.1064785+02:00",
-    "AvailableSeats": 98,
-    "BookedSeats": 2,
+    "AvailableSeats": 97,
+    "BookedSeats": 3,
     "Price": 8000,
     "Status": "Active"
   }
