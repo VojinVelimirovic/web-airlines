@@ -17,6 +17,8 @@
             let allReviews = [];
             let allAirlines = [];
             let allReservations = [];
+            let allFlights = [];
+            let allFlightsFiltered = [];
 
             function loadProfile() {
                 $.ajax({
@@ -45,8 +47,9 @@
                         if (user.userType === 'Admin') {
                             loadAllUsersTable();
                             loadCreatedReviewsTable();
-                            loadAllAirlines();
                             loadAllReservations();
+                            setTimeout(loadAllFlights, 2000);
+                            loadAllAirlines();
                         } else if (user.userType === 'Traveler') {
                             allUserReservations = user.reservations;
                             allUserFlights = extractFlightsFromReservations(allUserReservations);
@@ -72,6 +75,7 @@
             }
 
             function displayFlights(flights) {
+                console.log('displayFlights called');
                 $('#flightsSection').show();
                 const tableBody = $('#flightsBody');
                 tableBody.empty();
@@ -80,10 +84,11 @@
                     tableBody.append('<tr><td colspan="9">No recorded flights</td></tr>');
                 } else {
                     flights.forEach(function (flight) {
-                        const departureDate = new Date(flight.departureDateTime).toLocaleString();
-                        const arrivalDate = new Date(flight.arrivalDateTime).toLocaleString();
-                        const reviewButton = flight.status === 'Completed' ? `<button class="reviewBtn" data-flight='${JSON.stringify(flight)}'>Review</button>` : `<button class="review-btn" disabled>Review</button>`;
-                        const row = `<tr>
+                        if (!flight.isDeleted && !flight.airline.isDeleted) {
+                            const departureDate = new Date(flight.departureDateTime).toLocaleString();
+                            const arrivalDate = new Date(flight.arrivalDateTime).toLocaleString();
+                            const reviewButton = flight.status === 'Completed' ? `<button class="reviewBtn" data-flight='${JSON.stringify(flight)}'>Review</button>` : `<button class="review-btn" disabled>Review</button>`;
+                            const row = `<tr>
                                     <td>${flight.id}</td>
                                     <td>${flight.airline.name}</td>
                                     <td>${flight.from} - ${flight.destination}</td>
@@ -95,7 +100,8 @@
                                     <td>${flight.status}</td>
                                     <td>${reviewButton}</td>
                                 </tr>`;
-                        tableBody.append(row);
+                            tableBody.append(row);
+                        }
                     });
                 }
             }
@@ -109,13 +115,14 @@
                     tableBody.append('<tr><td colspan="10">No reservations made</td></tr>');
                 } else {
                     reservations.forEach(function (reservation) {
-                        const flight = reservation.flight;
-                        const departureDate = new Date(flight.departureDateTime).toLocaleString();
-                        const arrivalDate = new Date(flight.arrivalDateTime).toLocaleString();
-                        const now = new Date();
-                        const isWithin24Hours = new Date(flight.departureDateTime) - now <= 24 * 60 * 60 * 1000;
-                        const isDisabled = reservation.status === 'Cancelled' || reservation.status === 'Completed' || isWithin24Hours;
-                        const row = `<tr>
+                        if (!reservation.flight.isDeleted && !reservation.flight.airline.isDeleted) {
+                            const flight = reservation.flight;
+                            const departureDate = new Date(flight.departureDateTime).toLocaleString();
+                            const arrivalDate = new Date(flight.arrivalDateTime).toLocaleString();
+                            const now = new Date();
+                            const isWithin24Hours = new Date(flight.departureDateTime) - now <= 24 * 60 * 60 * 1000;
+                            const isDisabled = reservation.status === 'Cancelled' || reservation.status === 'Completed' || isWithin24Hours;
+                            const row = `<tr>
                                     <td>${reservation.id}</td>
                                     <td>${reservation.user.username}</td>
                                     <td>${flight.id}</td>
@@ -127,7 +134,8 @@
                                     <td>${reservation.status}</td>
                                     <td class="center-checkbox"><input type="checkbox" class="cancel-checkbox" data-reservation='${JSON.stringify(reservation)}' ${isDisabled ? 'disabled' : ''}></td>
                                 </tr>`;
-                        tableBody.append(row);
+                            tableBody.append(row);
+                        }
                     });
 
                     $('#cancelReservationBtn').prop('disabled', true);
@@ -212,6 +220,10 @@
             $(".datepicker").datepicker({
                 dateFormat: 'dd/mm/yy',
                 defaultDate: new Date(2000, 0, 1)
+            });
+
+            $(function () {
+                $(".datepicker2").datepicker({ dateFormat: 'yy-mm-dd' });
             });
 
             $('#editUsername').on('blur', function () {
@@ -494,7 +506,7 @@
                     tableBody.append('<tr><td colspan="9">No created reviews found</td></tr>');
                 } else {
                     reviews.forEach(function (review) {
-                        if (review.status === 'Created') {
+                        if (review.status === 'Created' && !review.airline.isDeleted) {
                             counter += 1;
                             let imageHtml = '';
                             if (review.image !== 'None') {
@@ -541,7 +553,11 @@
                     contentType: 'application/json',
                     data: stringifiedReview,
                     success: function () {
+                        loadAllUsersTable();
                         loadCreatedReviewsTable();
+                        loadAllReservations();
+                        loadAllFlights();
+                        loadAllAirlines();
                     },
                     error: function (xhr) {
                         console.error('Failed to approve review:', xhr.responseText);
@@ -565,7 +581,11 @@
                     contentType: 'application/json',
                     data: stringifiedReview,
                     success: function () {
+                        loadAllUsersTable();
                         loadCreatedReviewsTable();
+                        loadAllReservations();
+                        loadAllFlights();
+                        loadAllAirlines();
                     },
                     error: function (xhr) {
                         console.error('Failed to approve review:', xhr.responseText);
@@ -580,6 +600,7 @@
                     success: function (airlines) {
                         allAirlines = airlines;
                         displayAirlines(airlines);
+                        populateAirlinesDropdown(airlines);
                         $('#adminAirlinesSection').show();
                     },
                     error: function (xhr) {
@@ -588,6 +609,18 @@
                 });
             }
 
+            function populateAirlinesDropdown(airlines){
+                let select = $('#airlineSelect');
+                select.empty();
+                airlines.forEach(function (airline) {
+                    if (!airline.isDeleted) {
+                        select.append($('<option>', {
+                            value: airline.id,
+                            text: airline.name
+                        }));
+                    }
+                });
+            }
             function displayAirlines(airlines) {
                 const tableBody = $('#allAirlinesTableBody');
                 tableBody.empty();
@@ -607,7 +640,7 @@
                                 .replace(">", '&gt;');
                             let hasActiveFlight = false;
                             airline.flights.forEach(function (flight) {
-                                if (flight.status === 'Active') {
+                                if (flight.status === 'Active' && !flight.isDeleted && !flight.airline.isDeleted) {
                                     hasActiveFlight = true;
                                 }
                             });
@@ -647,6 +680,10 @@
                     contentType: 'application/json',
                     data: stringifiedAirline,
                     success: function () {
+                        loadAllUsersTable();
+                        loadCreatedReviewsTable();
+                        loadAllReservations();
+                        loadAllFlights();
                         loadAllAirlines();
                     },
                     error: function (xhr) {
@@ -714,6 +751,10 @@
                         $('#airlineName').val('');
                         $('#airlineAddress').val('');
                         $('#airlineContact').val('');
+                        loadAllUsersTable();
+                        loadCreatedReviewsTable();
+                        loadAllReservations();
+                        loadAllFlights();
                         loadAllAirlines();
                     },
                     error: function (xhr) {
@@ -770,6 +811,10 @@
                     success: function (response) {
                         console.log('Airline updated successfully:', response);
                         $('#editAirlineModal').hide();
+                        loadAllUsersTable();
+                        loadCreatedReviewsTable();
+                        loadAllReservations();
+                        loadAllFlights();
                         loadAllAirlines();
                     },
                     error: function (xhr) {
@@ -808,30 +853,42 @@
                     tableBody.append('<tr><td colspan="9">No users found</td></tr>');
                 } else {
                     reservations.forEach(function (reservation) {
-                        let stringifiedReservation = JSON.stringify(reservation)
-                            .replace("'", '&#39;')
-                            .replace("&", '&amp;')
-                            .replace("<", '&lt;')
-                            .replace(">", '&gt;');
-                        let route = `${reservation.flight.from} - ${reservation.flight.destination}`;
-                        let disabledPortion = 'disabled';
-                        if (reservation.status === 'Created') {
-                            disabledPortion = '';
-                        }
-                        let approveReservationBtn = `<td><button class="approveReservationBtn" data-reservation='${stringifiedReservation}' ${disabledPortion}>Approve</button></td>`;
-                        let cancelReservationBtn = `<td><button class="cancelReservationBtn" data-reservation='${stringifiedReservation}' ${disabledPortion}>Cancel</button></td>`;
-                        const row = `<tr>
+                        if (!reservation.flight.isDeleted && !reservation.flight.airline.isDeleted) {
+                            let stringifiedReservation = JSON.stringify(reservation)
+                                .replace("'", '&#39;')
+                                .replace("&", '&amp;')
+                                .replace("<", '&lt;')
+                                .replace(">", '&gt;');
+                            let route = `${reservation.flight.from} - ${reservation.flight.destination}`;
+                            let disabledPortion = 'disabled';
+                            if (reservation.status === 'Created') {
+                                disabledPortion = '';
+                            }
+                            const now = new Date();
+                            const isWithin24Hours = new Date(reservation.flight.departureDateTime) - now <= 24 * 60 * 60 * 1000;
+                            let disabledPortionCancel = 'disabled';
+                            if (reservation.status === 'Created' && !isWithin24Hours) {
+                                disabledPortionCancel = '';
+                            }
+                            const departureDate = new Date(reservation.flight.departureDateTime).toLocaleString();
+                            const arrivalDate = new Date(reservation.flight.arrivalDateTime).toLocaleString();
+                            let approveReservationBtn = `<td><button class="approveReservationBtn" data-reservation='${stringifiedReservation}' ${disabledPortion}>Approve</button></td>`;
+                            let cancelReservationBtn = `<td><button class="cancelReservationBtn" data-reservation='${stringifiedReservation}' ${disabledPortionCancel}>Cancel</button></td>`;
+                            const row = `<tr>
                     <td>${reservation.id}</td>
                     <td>${reservation.user.username}</td>
                     <td>${reservation.flight.id}</td>
                     <td>${route}</td>
+                    <td>${departureDate}</td>
+                    <td>${arrivalDate}</td>
                     <td>${reservation.numberOfPassengers}</td>
                     <td>${reservation.totalPrice}</td>
                     <td>${reservation.status}</td>
                     ${approveReservationBtn}
                     ${cancelReservationBtn}
                 </tr>`;
-                        tableBody.append(row);
+                            tableBody.append(row);
+                        }
                     });
                 }
             }
@@ -851,7 +908,11 @@
                     contentType: 'application/json',
                     data: stringifiedReservation,
                     success: function () {
+                        loadAllUsersTable();
+                        loadCreatedReviewsTable();
                         loadAllReservations();
+                        loadAllFlights();
+                        loadAllAirlines();
                     },
                     error: function (xhr) {
                         console.error('Failed to approve reservation:', xhr.responseText);
@@ -874,12 +935,242 @@
                     contentType: 'application/json',
                     data: stringifiedReservation,
                     success: function () {
+                        loadAllUsersTable();
+                        loadCreatedReviewsTable();
                         loadAllReservations();
+                        loadAllFlights();
+                        loadAllAirlines();
                     },
                     error: function (xhr) {
                         console.error('Failed to approve reservation:', xhr.responseText);
                     }
                 });
+            });
+            function loadAllFlights() {
+                $.ajax({
+                    url: '/api/flights',
+                    method: 'GET',
+                    success: function (flights) {
+                        allFlights = flights;
+                        allFlightsFiltered = flights;
+                        displayAllFlights(flights);
+                        $('#allFlightsSection').show();
+                    },
+                    error: function (xhr) {
+                        console.error('Failed to load flights:', xhr.responseText);
+                    }
+                });
+            }
+            function displayAllFlights(flights) {
+                const tableBody = $('#allFlightsTableBody');
+                tableBody.empty();
+
+                let counter = 0;
+
+                if (flights.length === 0) {
+                    tableBody.append('<tr><td colspan="12">No flights found</td></tr>');
+                } else {
+                    flights.forEach(function (flight) {
+                        if (!flight.isDeleted && !flight.airline.isDeleted) {
+                            counter += 1;
+                            let stringifiedFlight = JSON.stringify(flight)
+                                .replace("'", '&#39;')
+                                .replace("&", '&amp;')
+                                .replace("<", '&lt;')
+                                .replace(">", '&gt;');
+                            let hasReservation = false;
+                            allReservations.forEach(function (reservation) {
+                                if (reservation.flight.id === flight.id &&
+                                    (reservation.status === 'Created' || reservation.status === 'Approved') &&
+                                    !reservation.flight.isDeleted) {
+                                    hasReservation = true;
+                                }
+                            });
+                            
+                            const departureDateTime = new Date(flight.departureDateTime).toLocaleString();
+                            const arrivalDateTime = new Date(flight.arrivalDateTime).toLocaleString();
+                            let removeBtn = `<td><button class="removeFlightBtn" data-flight='${stringifiedFlight}'>Remove</button></td>`
+                            if (hasReservation) {
+                                removeBtn = `<td><button class="removeFlightBtn" data-flight='${stringifiedFlight}' disabled>Remove</button></td>`
+                            }
+                            const row = `<tr>
+                    <td>${flight.id}</td>
+                    <td>${flight.airline.id}</td>
+                    <td>${flight.from}</td>
+                    <td>${flight.destination}</td>
+                    <td>${departureDateTime}</td>
+                    <td>${arrivalDateTime}</td>
+                    <td>${flight.availableSeats}</td>
+                    <td>${flight.bookedSeats}</td>
+                    <td>${flight.price}</td>
+                    <td>${flight.status}</td>
+                    ${removeBtn}
+                    <td><button class="editFlightBtn" data-flight='${stringifiedFlight}'>Edit</button></td>
+                </tr>`;
+                            tableBody.append(row);
+                        }
+                    });
+                    if (counter === 0) {
+                        tableBody.append('<tr><td colspan="12">No flights found</td></tr>');
+                    }
+                }
+            }
+            $(document).on('click', '.removeFlightBtn', function () {
+                const flight = JSON.parse($(this).attr('data-flight'));
+
+                let stringifiedFlight = JSON.stringify(flight)
+                    .replace("'", '&#39;')
+                    .replace("&", '&amp;')
+                    .replace("<", '&lt;')
+                    .replace(">", '&gt;');
+
+                $.ajax({
+                    url: 'api/flights/remove',
+                    method: 'POST',
+                    contentType: 'application/json',
+                    data: stringifiedFlight,
+                    success: function () {
+                        loadAllReservations();
+                        loadAllUsersTable();
+                        loadCreatedReviewsTable();
+                        loadAllFlights();
+                        loadAllAirlines();
+                    },
+                    error: function (xhr) {
+                        console.error('Failed to remove flight:', xhr.responseText);
+                    }
+                });
+            });
+
+            $('#addFlightBtn').click(function (event) {
+                event.preventDefault();
+
+                const airlineId = $('#airlineSelect').val();
+                let chosenAirline = null;
+                allAirlines.forEach(function (airline) {
+                    if (airline.id == airlineId) {
+                        chosenAirline = airline;
+                    }
+                });
+                const chosenFrom = $('#fromInput').val();
+                const chosenDestination = $('#destinationInput').val();
+                const chosenDeparture = $('#departureDateTime').val();
+                const chosenArrival = $('#arrivalDateTime').val();
+                const chosenSeats = $('#availableSeats').val();
+                const chosenPrice = $('#price').val();
+                let shouldReturn = false;
+
+                if (!chosenFrom) {
+                    $('#fromInputError').text('From can\'t be left empty.');
+                    $('#fromInputError').show();
+                    shouldReturn = true;
+                } else {
+                    $('#fromInputError').hide();
+                }
+
+                if (!chosenDestination) {
+                    $('#destinationInputError').text('Destination can\'t be left empty.');
+                    $('#destinationInputError').show();
+                    shouldReturn = true;
+                } else {
+                    $('#destinationInputError').hide();
+                }
+
+                if (!chosenDeparture) {
+                    $('#departureDateTimeError').text('Departure time can\'t be left empty.');
+                    $('#departureDateTimeError').show();
+                    shouldReturn = true;
+                } else {
+                    $('#departureDateTimeError').hide();
+                }
+
+                if (!chosenArrival) {
+                    $('#arrivalDateTimeError').text('Arrival time can\'t be left empty.');
+                    $('#arrivalDateTimeError').show();
+                    shouldReturn = true;
+                } else {
+                    $('#arrivalDateTimeError').hide();
+                }
+
+                if (!chosenSeats) {
+                    $('#availableSeatsError').text('Available seats can\'t be left empty.');
+                    $('#availableSeatsError').show();
+                    shouldReturn = true;
+                } else {
+                    $('#availableSeatsError').hide();
+                }
+
+                if (!chosenPrice) {
+                    $('#priceError').text('Price can\'t be left empty.');
+                    $('#priceError').show();
+                    shouldReturn = true;
+                } else {
+                    $('#priceError').hide();
+                }
+
+                if (shouldReturn) {
+                    return;
+                }
+
+                const flightData = {
+                    airline: chosenAirline,
+                    from: chosenFrom,
+                    destination: chosenDestination,
+                    departureDateTime: chosenDeparture,
+                    arrivalDateTime: chosenArrival,
+                    availableSeats: chosenSeats,
+                    price: chosenPrice
+                };
+
+                let stringifiedFlight = JSON.stringify(flightData)
+                    .replace("'", '&#39;')
+                    .replace("&", '&amp;')
+                    .replace("<", '&lt;')
+                    .replace(">", '&gt;');
+
+                $.ajax({
+                    url: '/api/flights/add',
+                    method: 'POST',
+                    contentType: 'application/json',
+                    data: stringifiedFlight,
+                    success: function (response) {
+                        console.log('Flight submitted successfully:', response);
+                        $('#fromInput').val('');
+                        $('#destinationInput').val('');
+                        $('#departureDateTime').val('');
+                        $('#arrivalDateTime').val('');
+                        $('#availableSeats').val('');
+                        $('#price').val('');
+                        loadAllUsersTable();
+                        loadCreatedReviewsTable();
+                        loadAllReservations();
+                        loadAllFlights();
+                        loadAllAirlines();
+                    },
+                    error: function (xhr) {
+                        console.error('Failed to submit review:', xhr.responseText);
+                    }
+                });
+            });
+            $('#searchFormFlights').submit(function (event) {
+                event.preventDefault();
+
+                let flightFrom = $('#searchFlightFrom').val().trim().toLowerCase();
+                let flightDestination = $('#searchFlightDestination').val().trim().toLowerCase();
+                let departureStr = $('#searchFlightDeparture').val().trim().toLowerCase();
+
+                let filteredFlights = allFlights.filter(function (flight) {
+                    let matchFlightFrom = flightFrom === '' || flight.from.toLowerCase().includes(flightFrom);
+                    let matchFlightDestination = flightDestination === '' || flight.destination.toLowerCase().includes(flightDestination);
+                    let matchDeparture = true;
+                    let flightDepartureDate = new Date(flight.departureDateTime).toISOString().split('T')[0];
+                    if (departureStr !== "") {
+                        matchDeparture = (flightDepartureDate === departureStr);
+                    }
+                    return matchFlightFrom && matchFlightDestination && matchDeparture;
+                });
+
+                displayAllFlights(filteredFlights);
             });
         });
     </script>
@@ -1123,6 +1414,76 @@
             </tbody>
         </table>
     </div>
+    <div id="allFlightsSection" style="display: none; margin-left: 20px; margin-right:20px;">
+        <br />
+        <h1>Add flight</h1>
+        <br />
+        <form id="addFlightForm">
+            <label for="airlineSelect" style="margin-left:20px">Airline:</label><br />
+            <select id="airlineSelect" name="airline" style="margin-left:20px" required></select><br /><br />
+
+            <label for="fromInput" style="margin-left:20px">From:</label><br />
+            <input type="text" id="fromInput" name="from" style="margin-left:20px" required><br />
+            <span id="fromInputError" class="error" style="display: block; color: red; margin-left:20px;"></span><br />
+
+            <label for="destinationInput" style="margin-left:20px">Destination:</label><br />
+            <input type="text" id="destinationInput" name="destination" style="margin-left:20px" required><br />
+            <span id="destinationInputError" class="error" style="display: block; color: red; margin-left:20px;"></span><br />
+
+            <label for="departureDateTime" style="margin-left:20px">Departure Date and Time:</label><br />
+            <input type="datetime-local" id="departureDateTime" name="departureDateTime" style="margin-left:20px" required><br /><br />
+            <span id="departureDateTimeError" class="error" style="display: block; color: red; margin-left:20px;"></span><br />
+
+            <label for="arrivalDateTime" style="margin-left:20px">Arrival Date and Time:</label><br />
+            <input type="datetime-local" id="arrivalDateTime" name="arrivalDateTime" style="margin-left:20px" required><br /><br />
+            <span id="arrivalDateTimeError" class="error" style="display: block; color: red; margin-left:20px;"></span><br />
+
+            <label for="availableSeats" style="margin-left:20px">Available Seats:</label><br />
+            <input type="number" id="availableSeats" name="availableSeats" style="margin-left:20px" required><br /><br />
+            <span id="availableSeatsError" class="error" style="display: block; color: red; margin-left:20px;"></span><br />
+
+            <label for="price" style="margin-left:20px">Price (RSD):</label><br />
+            <input type="number" id="price" name="price" style="margin-left:20px" required><br /><br />
+            <span id="priceError" class="error" style="display: block; color: red; margin-left:20px;"></span><br />
+
+            <button type="submit" id="addFlightBtn" style="margin-left:20px">Add flight</button>
+        </form>
+        <br />
+        <h1>All flights</h1>
+        <br />
+        <div>
+            <form id="searchFormFlights" class="search">
+                <label for="searchFlightFrom">From:</label>
+                <input type="text" id="searchFlightFrom" class="input-field">
+                <label for="searchFlightDestination">Destination:</label>
+                <input type="text" id="searchFlightDestination" class="input-field">
+                <label for="searchFlightDeparture">Departure date:</label>
+                <input type="text" id="searchFlightDeparture" class="datepicker2">
+                <input type="submit" value="Search">
+            </form>
+        </div>
+        <br />
+        <table id="allFlightsTable">
+            <thead>
+                <tr>
+                    <th>Id</th>
+                    <th>Airline id</th>
+                    <th>From</th>
+                    <th>Destination</th>
+                    <th>Departure</th>
+                    <th>Arrival</th>
+                    <th>Available seats</th>
+                    <th>Booked seats</th>
+                    <th>Price</th>
+                    <th>Status</th>
+                    <th>Edit</th>
+                    <th>Delete</th>
+                </tr>
+            </thead>
+            <tbody id="allFlightsTableBody">
+            </tbody>
+        </table>
+    </div>
     <div id="allReservations" style="display: none; margin-left: 20px; margin-right:20px;">
         <br />
         <h1>All reservations</h1>
@@ -1134,6 +1495,8 @@
                     <th>User</th>
                     <th>Flight</th>
                     <th>Route</th>
+                    <th>Departure</th>
+                    <th>Arrival</th>
                     <th>Number of passengers</th>
                     <th>Total price</th>
                     <th>Status</th>

@@ -22,5 +22,34 @@ namespace Sistem_za_rezervaciju_avio_karata.Controllers
             }
             return Ok(Flights.AddFlight(flight));
         }
+        [HttpPost]
+        [Route("api/flights/remove")]
+        public IHttpActionResult Remove(Flight flight)
+        {
+            if (flight == null || flight.Id <= 0)
+            {
+                return BadRequest("Invalid flight.");
+            }
+
+            var existingflight = Flights.FlightsList.FirstOrDefault(a => a.Id == flight.Id);
+            if (existingflight == null)
+            {
+                return BadRequest("Flight not found.");
+            }
+
+            Flights.RemoveFlight(existingflight);
+            return Ok("Flight removed successfully.");
+        }
+
+        [HttpPost]
+        [Route("api/flights/add")]
+        public IHttpActionResult Add(Flight flight)
+        {
+            if (flight == null)
+            {
+                return BadRequest();
+            }
+            return Ok(Flights.AddFlight(flight));
+        }
     }
 }

@@ -17,6 +17,7 @@
     "AvailableSeats": 97,
     "BookedSeats": 3,
     "Price": 7000,
+    "IsDeleted": false,
     "Status": "Active"
   },
   {
@@ -37,6 +38,7 @@
     "AvailableSeats": 99,
     "BookedSeats": 1,
     "Price": 7500,
+    "IsDeleted": false,
     "Status": "Completed"
   },
   {
@@ -57,6 +59,91 @@
     "AvailableSeats": 97,
     "BookedSeats": 3,
     "Price": 8000,
+    "IsDeleted": false,
+    "Status": "Active"
+  },
+  {
+    "Id": 4,
+    "Airline": {
+      "Id": 1,
+      "Name": "Nikola Tesla Airlines",
+      "Address": "Aerodrom Beograd 59, Beograd 11180",
+      "ContactInfo": "tel 011 2094444",
+      "IsDeleted": false,
+      "Flights": [],
+      "Reviews": []
+    },
+    "From": "Belgrade",
+    "Destination": "Paris",
+    "DepartureDateTime": "2024-08-13T20:35:00",
+    "ArrivalDateTime": "2024-08-14T08:36:00",
+    "AvailableSeats": 70,
+    "BookedSeats": 0,
+    "Price": 6000,
+    "IsDeleted": true,
+    "Status": "Active"
+  },
+  {
+    "Id": 5,
+    "Airline": {
+      "Id": 7,
+      "Name": "asdads",
+      "Address": "adsadsdas",
+      "ContactInfo": "dasadsads",
+      "IsDeleted": true,
+      "Flights": [],
+      "Reviews": []
+    },
+    "From": "adsdsa",
+    "Destination": "sadsadsa",
+    "DepartureDateTime": "2024-08-02T20:40:00",
+    "ArrivalDateTime": "2024-08-03T20:40:00",
+    "AvailableSeats": 80,
+    "BookedSeats": 0,
+    "Price": 7000,
+    "IsDeleted": true,
+    "Status": "Active"
+  },
+  {
+    "Id": 6,
+    "Airline": {
+      "Id": 8,
+      "Name": "adsads",
+      "Address": "sadasdads",
+      "ContactInfo": "saddasdas",
+      "IsDeleted": true,
+      "Flights": [],
+      "Reviews": []
+    },
+    "From": "asddas",
+    "Destination": "dsadsad",
+    "DepartureDateTime": "2024-06-30T21:26:00",
+    "ArrivalDateTime": "2024-07-01T21:26:00",
+    "AvailableSeats": 33,
+    "BookedSeats": 0,
+    "Price": 4444,
+    "IsDeleted": true,
+    "Status": "Active"
+  },
+  {
+    "Id": 7,
+    "Airline": {
+      "Id": 9,
+      "Name": "a1",
+      "Address": "a",
+      "ContactInfo": "a",
+      "IsDeleted": false,
+      "Flights": [],
+      "Reviews": []
+    },
+    "From": "a",
+    "Destination": "a",
+    "DepartureDateTime": "2024-06-29T13:49:00",
+    "ArrivalDateTime": "2024-06-30T23:50:00",
+    "AvailableSeats": 32,
+    "BookedSeats": 1,
+    "Price": 1111,
+    "IsDeleted": false,
     "Status": "Active"
   }
 ]

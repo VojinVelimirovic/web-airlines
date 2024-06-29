@@ -122,7 +122,7 @@
             }
 
             function renderFlightsTable(data) {
-                let activeFlights = data.filter(element => element.status === 'Active');
+                let activeFlights = data.filter(element => element.status === 'Active' && !element.isDeleted && !element.airline.isDeleted);
 
                 let tableOfFlights = '<table border="1">';
                 if (currentUser && currentUser.userType === 'Traveler') {
@@ -330,7 +330,7 @@
                         matchArrivalDate = flightArrivalDate === arrivalDate;
                     }
 
-                    return matchAirline && matchFrom && matchDestination && matchDepartureDate && matchArrivalDate && flight.status === 'Active';
+                    return matchAirline && matchFrom && matchDestination && matchDepartureDate && matchArrivalDate && flight.status === 'Active' && !flight.isDeleted && !flight.airline.isDeleted;
                 });
                 flightsFiltered = filteredFlights;
                 renderFlightsTable(filteredFlights);

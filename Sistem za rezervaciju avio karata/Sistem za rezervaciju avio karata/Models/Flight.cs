@@ -22,6 +22,7 @@ namespace Sistem_za_rezervaciju_avio_karata.Models
         public int AvailableSeats { get; set; }
         public int BookedSeats { get; set; }
         public int Price { get; set; }
+        public bool IsDeleted { get; set; }
         [JsonConverter(typeof(StringEnumConverter))]
         public FlightStatus Status { get; set; }
     }
