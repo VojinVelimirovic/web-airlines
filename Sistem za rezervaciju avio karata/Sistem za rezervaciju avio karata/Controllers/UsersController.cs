@@ -124,6 +124,18 @@ namespace Sistem_za_rezervaciju_avio_karata.Controllers
         }
 
         [HttpGet]
+        [Route("api/users/{username}")]
+        public IHttpActionResult UsernameTaken(string username)
+        {
+            if(Users.FindByUsername(username) == null)
+            {
+                return BadRequest();
+            }
+
+            return Ok();
+        }
+
+        [HttpGet]
         [Route("api/users/currentuser")]
         public IHttpActionResult GetCurrentUser()
         {

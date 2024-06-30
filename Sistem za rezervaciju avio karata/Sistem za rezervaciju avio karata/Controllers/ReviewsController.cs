@@ -1,9 +1,11 @@
 ﻿using Sistem_za_rezervaciju_avio_karata.Models;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
+using System.Web;
 using System.Web.Http;
 
 namespace Sistem_za_rezervaciju_avio_karata.Controllers
@@ -22,6 +24,33 @@ namespace Sistem_za_rezervaciju_avio_karata.Controllers
             Reviews.AddReview(review);
 
             return Ok();
+        }
+
+        [HttpPost]
+        [Route("api/reviews/image")]
+        public IHttpActionResult UploadImage()
+        {
+            try
+            {
+                if (HttpContext.Current.Request.Files.Count == 0)
+                {
+                    return BadRequest("No file uploaded.");
+                }
+                var postedFile = HttpContext.Current.Request.Files[0];
+                if (postedFile == null || postedFile.ContentLength == 0)
+                {
+                    return BadRequest("Invalid file.");
+                }
+                var fileName = Path.GetFileName(postedFile.FileName);
+                var filePath = Path.Combine(HttpContext.Current.Server.MapPath("~/images"), fileName);
+
+                postedFile.SaveAs(filePath);
+                return Ok(new { FileName = fileName, FilePath = "/images/" + fileName });
+            }
+            catch (Exception ex)
+            {
+                return InternalServerError(ex);
+            }
         }
 
         [HttpPost]

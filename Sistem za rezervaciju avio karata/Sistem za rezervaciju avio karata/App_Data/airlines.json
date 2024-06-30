@@ -68,6 +68,48 @@
         "Price": 13213,
         "IsDeleted": true,
         "Status": "Active"
+      },
+      {
+        "Id": 9,
+        "Airline": {
+          "Id": 1,
+          "Name": "Nikola Tesla Airlines",
+          "Address": "Aerodrom Beograd 59, Beograd 11180",
+          "ContactInfo": "tel 011 2094444",
+          "IsDeleted": false,
+          "Flights": [],
+          "Reviews": []
+        },
+        "From": "d",
+        "Destination": "d",
+        "DepartureDateTime": "2024-07-07T20:40:00",
+        "ArrivalDateTime": "2024-07-01T20:40:00",
+        "AvailableSeats": 4,
+        "BookedSeats": 0,
+        "Price": 0,
+        "IsDeleted": true,
+        "Status": "Active"
+      },
+      {
+        "Id": 10,
+        "Airline": {
+          "Id": 1,
+          "Name": "Nikola Tesla Airlines",
+          "Address": "Aerodrom Beograd 59, Beograd 11180",
+          "ContactInfo": "tel 011 2094444",
+          "IsDeleted": false,
+          "Flights": [],
+          "Reviews": []
+        },
+        "From": "asd",
+        "Destination": "sadd",
+        "DepartureDateTime": "2024-07-04T20:46:00",
+        "ArrivalDateTime": "2024-07-05T20:46:00",
+        "AvailableSeats": 3,
+        "BookedSeats": 0,
+        "Price": 3,
+        "IsDeleted": true,
+        "Status": "Active"
       }
     ],
     "Reviews": []
@@ -236,6 +278,87 @@
         "Content": "Please cancel this review",
         "Status": 2,
         "Image": "None"
+      },
+      {
+        "Id": 6,
+        "User": {
+          "Username": "marko",
+          "Password": "marko",
+          "FirstName": "Marko",
+          "LastName": "Markovic",
+          "Email": "marko@gmail.com",
+          "DateOfBirth": "19/01/2000",
+          "Gender": "Male",
+          "UserType": 0,
+          "Reservations": []
+        },
+        "Airline": {
+          "Id": 2,
+          "Name": "Budapest Airlines",
+          "Address": "Budapest, 1185 Hungary",
+          "ContactInfo": "tel +36 1 296 7000",
+          "IsDeleted": false,
+          "Flights": [],
+          "Reviews": []
+        },
+        "Title": ".",
+        "Content": ".",
+        "Status": 2,
+        "Image": "/images/budaAirport.jpeg"
+      },
+      {
+        "Id": 7,
+        "User": {
+          "Username": "marko",
+          "Password": "marko",
+          "FirstName": "Marko",
+          "LastName": "Markovic",
+          "Email": "marko@gmail.com",
+          "DateOfBirth": "19/01/2000",
+          "Gender": "Male",
+          "UserType": 0,
+          "Reservations": []
+        },
+        "Airline": {
+          "Id": 2,
+          "Name": "Budapest Airlines",
+          "Address": "Budapest, 1185 Hungary",
+          "ContactInfo": "tel +36 1 296 7000",
+          "IsDeleted": false,
+          "Flights": [],
+          "Reviews": []
+        },
+        "Title": ".",
+        "Content": ".",
+        "Status": 2,
+        "Image": "/images/236192.jpg"
+      },
+      {
+        "Id": 8,
+        "User": {
+          "Username": "marko",
+          "Password": "marko",
+          "FirstName": "Marko",
+          "LastName": "Markovic",
+          "Email": "marko@gmail.com",
+          "DateOfBirth": "19/01/2000",
+          "Gender": "Male",
+          "UserType": 0,
+          "Reservations": []
+        },
+        "Airline": {
+          "Id": 2,
+          "Name": "Budapest Airlines",
+          "Address": "Budapest, 1185 Hungary",
+          "ContactInfo": "tel +36 1 296 7000",
+          "IsDeleted": false,
+          "Flights": [],
+          "Reviews": []
+        },
+        "Title": "a",
+        "Content": "a",
+        "Status": 0,
+        "Image": "/images/236192.jpg"
       }
     ]
   },
@@ -364,7 +487,7 @@
     "Name": "a1",
     "Address": "a",
     "ContactInfo": "a",
-    "IsDeleted": false,
+    "IsDeleted": true,
     "Flights": [
       {
         "Id": 7,
@@ -373,7 +496,7 @@
           "Name": "a1",
           "Address": "a",
           "ContactInfo": "a",
-          "IsDeleted": false,
+          "IsDeleted": true,
           "Flights": [],
           "Reviews": []
         },
@@ -384,10 +507,19 @@
         "AvailableSeats": 32,
         "BookedSeats": 0,
         "Price": 1111,
-        "IsDeleted": false,
+        "IsDeleted": true,
         "Status": "Active"
       }
     ],
+    "Reviews": []
+  },
+  {
+    "Id": 10,
+    "Name": "asd",
+    "Address": "asdasd",
+    "ContactInfo": "dasads",
+    "IsDeleted": true,
+    "Flights": [],
     "Reviews": []
   }
 ]

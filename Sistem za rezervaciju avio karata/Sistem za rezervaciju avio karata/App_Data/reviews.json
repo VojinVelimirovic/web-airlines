@@ -133,5 +133,86 @@
     "Content": "Please cancel this review",
     "Status": 2,
     "Image": "None"
+  },
+  {
+    "Id": 6,
+    "User": {
+      "Username": "marko",
+      "Password": "marko",
+      "FirstName": "Marko",
+      "LastName": "Markovic",
+      "Email": "marko@gmail.com",
+      "DateOfBirth": "19/01/2000",
+      "Gender": "Male",
+      "UserType": 0,
+      "Reservations": []
+    },
+    "Airline": {
+      "Id": 2,
+      "Name": "Budapest Airlines",
+      "Address": "Budapest, 1185 Hungary",
+      "ContactInfo": "tel +36 1 296 7000",
+      "IsDeleted": false,
+      "Flights": [],
+      "Reviews": []
+    },
+    "Title": ".",
+    "Content": ".",
+    "Status": 2,
+    "Image": "/images/budaAirport.jpeg"
+  },
+  {
+    "Id": 7,
+    "User": {
+      "Username": "marko",
+      "Password": "marko",
+      "FirstName": "Marko",
+      "LastName": "Markovic",
+      "Email": "marko@gmail.com",
+      "DateOfBirth": "19/01/2000",
+      "Gender": "Male",
+      "UserType": 0,
+      "Reservations": []
+    },
+    "Airline": {
+      "Id": 2,
+      "Name": "Budapest Airlines",
+      "Address": "Budapest, 1185 Hungary",
+      "ContactInfo": "tel +36 1 296 7000",
+      "IsDeleted": false,
+      "Flights": [],
+      "Reviews": []
+    },
+    "Title": ".",
+    "Content": ".",
+    "Status": 2,
+    "Image": "/images/236192.jpg"
+  },
+  {
+    "Id": 8,
+    "User": {
+      "Username": "marko",
+      "Password": "marko",
+      "FirstName": "Marko",
+      "LastName": "Markovic",
+      "Email": "marko@gmail.com",
+      "DateOfBirth": "19/01/2000",
+      "Gender": "Male",
+      "UserType": 0,
+      "Reservations": []
+    },
+    "Airline": {
+      "Id": 2,
+      "Name": "Budapest Airlines",
+      "Address": "Budapest, 1185 Hungary",
+      "ContactInfo": "tel +36 1 296 7000",
+      "IsDeleted": false,
+      "Flights": [],
+      "Reviews": []
+    },
+    "Title": "a",
+    "Content": "a",
+    "Status": 0,
+    "Image": "/images/236192.jpg"
   }
 ]

@@ -49,19 +49,36 @@
         <a href="Login.html">Log in</a>
     </div>
     <br />
-    <h1>Login</h1>
-    <form id="loginForm" style="margin-left:20px">
-        <label for="username">Username:</label>
-        <input type="text" id="username" name="username" required>
-        <span id="usernameError" class="error"></span>
-        <br><br>
-
-        <label for="password">Password:</label>
-        <input type="password" id="password" name="password" required>
-        <span id="passwordError" class="error"></span>
-        <br><br>
-
-        <input type="submit" value="Login">
+    <div class="login-form-container">
+    <form id="loginForm" class="login-form">
+        <table class="login-table">
+            <tr>
+                <td><label for="username">Username:</label></td>
+                <td>
+                    <input type="text" id="username" name="username" required>
+                    <span id="usernameError" class="error"></span>
+                </td>
+            </tr>
+            <tr>
+                <td><label for="password">Password:</label></td>
+                <td>
+                    <input type="password" id="password" name="password" required>
+                    <span id="passwordError" class="error"></span>
+                </td>
+            </tr>
+            <tr>
+                <td colspan="2" style="text-align: center;">
+                    <input type="submit" value="Login" class="login-button">
+                </td>
+            </tr>
+        </table>
     </form>
+</div>
+    <br />
+    <br />
+    <br />
+    <br />
+    <br />
+    <br />
 </body>
 </html>

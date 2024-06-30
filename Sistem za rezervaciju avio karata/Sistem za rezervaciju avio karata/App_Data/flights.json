@@ -132,7 +132,7 @@
       "Name": "a1",
       "Address": "a",
       "ContactInfo": "a",
-      "IsDeleted": false,
+      "IsDeleted": true,
       "Flights": [],
       "Reviews": []
     },
@@ -143,8 +143,8 @@
     "AvailableSeats": 32,
     "BookedSeats": 1,
     "Price": 1111,
-    "IsDeleted": false,
-    "Status": "Active"
+    "IsDeleted": true,
+    "Status": "Completed"
   },
   {
     "Id": 8,
@@ -164,6 +164,48 @@
     "AvailableSeats": 33,
     "BookedSeats": 0,
     "Price": 13213,
+    "IsDeleted": true,
+    "Status": "Active"
+  },
+  {
+    "Id": 9,
+    "Airline": {
+      "Id": 1,
+      "Name": "Nikola Tesla Airlines",
+      "Address": "Aerodrom Beograd 59, Beograd 11180",
+      "ContactInfo": "tel 011 2094444",
+      "IsDeleted": false,
+      "Flights": [],
+      "Reviews": []
+    },
+    "From": "d",
+    "Destination": "d",
+    "DepartureDateTime": "2024-07-07T20:40:00",
+    "ArrivalDateTime": "2024-07-01T20:40:00",
+    "AvailableSeats": 4,
+    "BookedSeats": 0,
+    "Price": 0,
+    "IsDeleted": true,
+    "Status": "Active"
+  },
+  {
+    "Id": 10,
+    "Airline": {
+      "Id": 1,
+      "Name": "Nikola Tesla Airlines",
+      "Address": "Aerodrom Beograd 59, Beograd 11180",
+      "ContactInfo": "tel 011 2094444",
+      "IsDeleted": false,
+      "Flights": [],
+      "Reviews": []
+    },
+    "From": "asd",
+    "Destination": "sadd",
+    "DepartureDateTime": "2024-07-04T20:46:00",
+    "ArrivalDateTime": "2024-07-05T20:46:00",
+    "AvailableSeats": 3,
+    "BookedSeats": 0,
+    "Price": 3,
     "IsDeleted": true,
     "Status": "Active"
   }

@@ -319,6 +319,7 @@
                 if (!reviewTitle) {
                     $('#reviewTitleError').text('Title can\'t be left empty.');
                     $('#reviewTitleError').show();
+                    return;
                 } else {
                     $('#reviewTitleError').hide();
                 }
@@ -326,51 +327,96 @@
                 if (!reviewContent) {
                     $('#reviewContentError').text('Content can\'t be left empty.');
                     $('#reviewContentError').show();
+                    return;
                 } else {
                     $('#reviewContentError').hide();
-                }
-
-                if (!reviewTitle || !reviewContent) {
-                    return;
                 }
 
                 let reviewImage = 'None';
                 const file = $('#reviewImage')[0].files[0];
                 if (file) {
                     reviewImage = '/images/' + file.name;
+
+                    // Upload image first
+                    const formData = new FormData();
+                    formData.append('file', file);
+
+                    $.ajax({
+                        url: '/api/reviews/image',
+                        method: 'POST',
+                        contentType: false,
+                        processData: false,
+                        data: formData,
+                        success: function (imageResponse) {
+                            console.log('Image uploaded successfully:', imageResponse);
+
+                            const reviewData = {
+                                user: currentUser,
+                                airline: flight.airline,
+                                title: reviewTitle,
+                                content: reviewContent,
+                                status: 'Created',
+                                image: reviewImage
+                            };
+
+                            $.ajax({
+                                url: '/api/reviews/add',
+                                method: 'POST',
+                                contentType: 'application/json',
+                                data: JSON.stringify(reviewData),
+                                success: function (response) {
+                                    console.log('Review submitted successfully:', response);
+                                    $('#reviewFormContainer').hide();
+                                    loadProfile();
+                                    $('#reviewTitle').val('');
+                                    $('#reviewContent').val('');
+                                    $('#reviewImage').val('');
+                                    $('#imagePreview').hide();
+                                    $('html, body').animate({
+                                        scrollTop: $('#flightsSection').offset().top
+                                    }, 800);
+                                },
+                                error: function (xhr) {
+                                    console.error('Failed to submit review:', xhr.responseText);
+                                }
+                            });
+                        },
+                        error: function (xhr) {
+                            console.error('Failed to upload image:', xhr.responseText);
+                        }
+                    });
+                } else {
+                    const reviewData = {
+                        user: currentUser,
+                        airline: flight.airline,
+                        title: reviewTitle,
+                        content: reviewContent,
+                        status: 'Created',
+                        image: reviewImage
+                    };
+
+                    $.ajax({
+                        url: '/api/reviews/add',
+                        method: 'POST',
+                        contentType: 'application/json',
+                        data: JSON.stringify(reviewData),
+                        success: function (response) {
+                            console.log('Review submitted successfully:', response);
+                            $('#reviewFormContainer').hide();
+                            loadProfile();
+                            $('#reviewTitle').val('');
+                            $('#reviewContent').val('');
+                            $('#reviewImage').val('');
+                            $('#imagePreview').hide();
+                            $('html, body').animate({
+                                scrollTop: $('#flightsSection').offset().top
+                            }, 800);
+                        },
+                        error: function (xhr) {
+                            console.error('Failed to submit review:', xhr.responseText);
+                        }
+                    });
                 }
-
-                const reviewData = {
-                    user: currentUser,
-                    airline: flight.airline,
-                    title: reviewTitle,
-                    content: reviewContent,
-                    status: 'Created',
-                    image: reviewImage
-                };
-
-                $.ajax({
-                    url: '/api/reviews/add',
-                    method: 'POST',
-                    contentType: 'application/json',
-                    data: JSON.stringify(reviewData),
-                    success: function (response) {
-                        console.log('Review submitted successfully:', response);
-                        $('#reviewFormContainer').hide();
-                        loadProfile();
-                        $('#reviewFormContainer').hide();
-                        $('#reviewTitle').val('');
-                        $('#reviewContent').val('');
-                        $('#reviewImage').val('');
-                        $('#imagePreview').hide();
-                        $('html, body').animate({
-                            scrollTop: $('#flightsSection').offset().top
-                        }, 800);
-                    },
-                    error: function (xhr) {
-                        console.error('Failed to submit review:', xhr.responseText);
-                    }
-                });
             });
             $('#cancelReviewBtn').click(function () {
                 $('#reviewFormContainer').hide();
@@ -1197,30 +1243,43 @@
         <h1>Edit flight</h1>
         <br />
         <form id="editFlightForm" data-flight-id="${flight.id}">
-            <label for="editDepartureDateTime" style="margin-left:20px">Departure Date and Time:</label><br />
-            <input type="datetime-local" id="editDepartureDateTime" style="margin-left:20px" name="departureDateTime" value="${departureDateTime}" required><br /><br />
-            
-            <label for="editArrivalDateTime" style="margin-left:20px">Arrival Date and Time:</label><br />
-            <input type="datetime-local" id="editArrivalDateTime" style="margin-left:20px" name="arrivalDateTime" value="${arrivalDateTime}" required><br /><br />
-            
-            <label for="editAvailableSeats" style="margin-left:20px">Available Seats:</label><br />
-            <input type="number" id="editAvailableSeats" style="margin-left:20px" name="availableSeats" value="${flight.availableSeats}" required><br /><br />
-            
-            <label for="editPrice" style="margin-left:20px">Price (RSD):</label><br />
-            <input type="number" style="margin-left:20px" id="editPrice" name="price" value="${flight.price}" ${hasReservation ? 'disabled' : ''} required><br /><br />
-            
-            <label style="margin-left:20px" for="editStatus">Status:</label><br />
-            <select style="margin-left:20px" id="editStatus" name="status" required>
-                <option value="Active" ${flight.status === 'Active' ? 'selected' : ''}>Active</option>
-                <option value="Cancelled" ${flight.status === 'Cancelled' ? 'selected' : ''}>Cancelled</option>
-            </select><br /><br />
-            
-            <button style="margin-left:20px" type="submit">Submit</button>
-            <button type="button" id="cancelFlightEditBtn">Cancel</button>
+            <table>
+                <tr>
+                    <td><label for="editDepartureDateTime">Departure Date and Time:</label></td>
+                    <td><input type="datetime-local" id="editDepartureDateTime" name="departureDateTime" value="${departureDateTime}" required></td>
+                </tr>
+                <tr>
+                    <td><label for="editArrivalDateTime">Arrival Date and Time:</label></td>
+                    <td><input type="datetime-local" id="editArrivalDateTime" name="arrivalDateTime" value="${arrivalDateTime}" required></td>
+                </tr>
+                <tr>
+                    <td><label for="editAvailableSeats">Available Seats:</label></td>
+                    <td><input type="number" id="editAvailableSeats" name="availableSeats" value="${flight.availableSeats}" required></td>
+                </tr>
+                <tr>
+                    <td><label for="editPrice">Price (RSD):</label></td>
+                    <td><input type="number" id="editPrice" name="price" value="${flight.price}" ${hasReservation ? 'disabled' : ''} required></td>
+                </tr>
+                <tr>
+                    <td><label for="editStatus">Status:</label></td>
+                    <td>
+                        <select id="editStatus" name="status" required>
+                            <option value="Active" ${flight.status === 'Active' ? 'selected' : ''}>Active</option>
+                            <option value="Cancelled" ${flight.status === 'Cancelled' ? 'selected' : ''}>Cancelled</option>
+                        </select>
+                    </td>
+                </tr>
+                <tr>
+                    <td><button type="submit">Submit</button></td>
+                    <td><button type="button" id="cancelFlightEditBtn">Cancel</button></td>
+                </tr>
+            </table>
         </form>
     `;
+
                 $('#editFlight').html(editForm);
                 $('#editFlight').show();
+
                 $('#editFlightForm').submit(function (event) {
                     event.preventDefault();
 
@@ -1238,20 +1297,14 @@
                         status: $('#editStatus').val(),
                     };
 
-                    let stringifiedFlight = JSON.stringify(updatedFlight)
-                        .replace("'", '&#39;')
-                        .replace("&", '&amp;')
-                        .replace("<", '&lt;')
-                        .replace(">", '&gt;');
-
                     $.ajax({
                         url: `/api/flights/update`,
                         method: 'POST',
                         contentType: 'application/json',
-                        data: stringifiedFlight,
+                        data: JSON.stringify(updatedFlight),
                         success: function () {
                             $('#editFlight').hide();
-                            loadAllFlights(); 
+                            loadAllFlights();
                         },
                         error: function (xhr) {
                             console.error('Failed to update flight:', xhr.responseText);
@@ -1285,7 +1338,7 @@
         <button id="editBtn" style="margin-left:10px;">Edit Profile</button>
     </div>
 
-    <div id="editProfileModal" style="display:none; margin-left:20px;">
+    <div id="editProfileModal" class="profile-div">
         <form id="editProfileForm">
             <label for="editUsername">Username:</label>
             <input type="text" id="editUsername" name="editUsername" required><br>
@@ -1301,15 +1354,15 @@
             <label for="editDateOfBirth">Date of Birth:</label>
             <input type="text" id="editDateOfBirth" name="editDateOfBirth" class="datepicker" required><br>
             <label>Gender:</label>
-            <input type="radio" id="editMale" name="editGender" value="Male">
+            <input type="radio" id="editMale" name="editGender" value="Male" required>
             <label for="editMale">Male</label>
-            <input type="radio" id="editFemale" name="editGender" value="Female">
+            <input type="radio" id="editFemale" name="editGender" value="Female" required>
             <label for="editFemale">Female</label><br>
             <button type="submit">Save changes</button>
             <button type="button" id="cancelEditBtn">Cancel</button>
         </form>
     </div>
-    <div id="flightsSection" style="display: none; margin-left: 20px; margin-right:20px;">
+    <div id="flightsSection" class="profile-div">
         <br />
         <br />
         <br />
@@ -1343,7 +1396,7 @@
             <tbody id="flightsBody"></tbody>
         </table>
     </div>
-    <div id="reservationsSection" style="display: none; margin-left: 20px; margin-right:20px;">
+    <div id="reservationsSection" class="profile-div">
         <br />
         <br />
         <br />
@@ -1381,9 +1434,9 @@
         <br />
         <button id="cancelReservationBtn" style="margin-right:20px; float:right;">Cancel Reservation</button>
     </div>
-    <div id="reviewFormContainer" style="display: none; margin-left: 20px; margin-right: 20px;">
+    <div id="reviewFormContainer" class="profile-div">
         <br />
-        <h1>Submit Review</h1>
+        <h1 style="text-align:left; margin-left:20px;">Submit Review</h1>
         <form id="reviewForm">
             <label for="reviewTitle" style="margin-left:20px">Review Title:</label><br><br />
             <input type="text" id="reviewTitle" name="title" style="margin-left:20px" required><br />
@@ -1398,7 +1451,7 @@
             <button type="button" id="cancelReviewBtn">Cancel</button>
         </form>
     </div>
-    <div id="adminUsersTable" style="display: none; margin-left: 20px; margin-right:20px;">
+    <div id="adminUsersTable" class="profile-div">
         <br />
         <br />
         <br />
@@ -1443,36 +1496,59 @@
             </tbody>
         </table>
     </div>
-    <div id="adminAirlinesSection" style="display: none; margin-left: 20px; margin-right:20px;">
+    <div id="adminAirlinesSection" class="profile-div">
         <br />
-        <h1>Add airline</h1>
+        <div class="add-airline-form-container">
+            <h1>Add Airline</h1>
+            <form id="addAirlineForm">
+                <table>
+                    <tr>
+                        <td><label for="airlineName">Airline Name:</label></td>
+                        <td><input type="text" id="airlineName" name="name" required></td>
+                        <td><span id="airlineNameError" class="error"></span></td>
+                    </tr>
+                    <tr>
+                        <td><label for="airlineAddress">Airline Address:</label></td>
+                        <td><input type="text" id="airlineAddress" name="address" required></td>
+                        <td><span id="airlineAddressError" class="error"></span></td>
+                    </tr>
+                    <tr>
+                        <td><label for="airlineContact">Airline Contact info:</label></td>
+                        <td><input type="text" id="airlineContact" name="contact" required></td>
+                        <td><span id="airlineContactError" class="error"></span></td>
+                    </tr>
+                    <tr>
+                        <td colspan="3"><button type="submit" id="addAirlineBtn">Add Airline</button></td>
+                    </tr>
+                </table>
+            </form>
+        </div>
         <br />
-        <form id="addAirlineForm">
-            <label for="airlineName" style="margin-left:20px">Airline Name:</label><br />
-            <input type="text" id="airlineName" name="name" style="margin-left:20px" required><br />
-            <span id="airlineNameError" class="error" style="display: block; color: red; margin-left:20px;"></span><br />
-            <label for="airlineAddress" style="margin-left:20px">Airline Address:</label><br />
-            <input type="text" id="airlineAddress" name="address" style="margin-left:20px" required><br />
-            <span id="airlineAddressError" class="error" style="display: block; color: red; margin-left:20px;"></span><br />
-            <label for="airlineContact" style="margin-left:20px">Airline Contact info:</label><br />
-            <input type="text" id="airlineContact" name="contact" style="margin-left:20px" required><br />
-            <span id="airlineContactError" class="error" style="display: block; color: red; margin-left:20px;"></span><br />
-            <button type="submit" id="addAirlineBtn" style="margin-left:20px">Add airline</button>
-        </form>
-        <br />
-        <div id="editAirlineModal" style="display:none;">
+        <div id="editAirlineModal" style="display:none;" class="edit-airline-modal">
             <h1>Edit Airline</h1>
             <br />
-            <form id="editAirlineForm">
+            <form id="editAirlineForm" class="edit-airline-form">
                 <input type="hidden" id="editAirlineId">
-                <label for="editAirlineName" style="margin-left:20px">Name:</label><br>
-                <input type="text" id="editAirlineName" style="margin-left:20px" required><br>
-                <label for="editAirlineAddress" style="margin-left:20px">Address:</label><br>
-                <input type="text" id="editAirlineAddress" style="margin-left:20px" required><br>
-                <label for="editAirlineContact" style="margin-left:20px">Contact Info:</label><br>
-                <input type="text" id="editAirlineContact" style="margin-left:20px" required><br>
-                <button type="submit" style="margin-left:20px">Save</button>
-                <button type="button" id="cancelEditAirline" style="margin-left:20px">Cancel</button>
+                <table>
+                    <tr>
+                        <td><label for="editAirlineName">Name:</label></td>
+                        <td><input type="text" id="editAirlineName" name="name" required></td>
+                    </tr>
+                    <tr>
+                        <td><label for="editAirlineAddress">Address:</label></td>
+                        <td><input type="text" id="editAirlineAddress" name="address" required></td>
+                    </tr>
+                    <tr>
+                        <td><label for="editAirlineContact">Contact Info:</label></td>
+                        <td><input type="text" id="editAirlineContact" name="contact" required></td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <button type="submit" id="saveEditAirline">Save</button>
+                        </td>
+                        <td><button type="button" id="cancelEditAirline">Cancel</button></td>
+                    </tr>
+                </table>
             </form>
         </div>
         <br />
@@ -1505,40 +1581,76 @@
             </tbody>
         </table>
     </div>
-    <div id="allFlightsSection" style="display: none; margin-left: 20px; margin-right:20px;">
+    <div id="allFlightsSection" class="profile-div">
         <br />
-        <h1>Add flight</h1>
-        <br />
-        <form id="addFlightForm">
-            <label for="airlineSelect" style="margin-left:20px">Airline:</label><br />
-            <select id="airlineSelect" name="airline" style="margin-left:20px" required></select><br /><br />
-
-            <label for="fromInput" style="margin-left:20px">From:</label><br />
-            <input type="text" id="fromInput" name="from" style="margin-left:20px" required><br />
-            <span id="fromInputError" class="error" style="display: block; color: red; margin-left:20px;"></span><br />
-
-            <label for="destinationInput" style="margin-left:20px">Destination:</label><br />
-            <input type="text" id="destinationInput" name="destination" style="margin-left:20px" required><br />
-            <span id="destinationInputError" class="error" style="display: block; color: red; margin-left:20px;"></span><br />
-
-            <label for="departureDateTime" style="margin-left:20px">Departure Date and Time:</label><br />
-            <input type="datetime-local" id="departureDateTime" name="departureDateTime" style="margin-left:20px" required><br /><br />
-            <span id="departureDateTimeError" class="error" style="display: block; color: red; margin-left:20px;"></span><br />
-
-            <label for="arrivalDateTime" style="margin-left:20px">Arrival Date and Time:</label><br />
-            <input type="datetime-local" id="arrivalDateTime" name="arrivalDateTime" style="margin-left:20px" required><br /><br />
-            <span id="arrivalDateTimeError" class="error" style="display: block; color: red; margin-left:20px;"></span><br />
-
-            <label for="availableSeats" style="margin-left:20px">Available Seats:</label><br />
-            <input type="number" id="availableSeats" name="availableSeats" style="margin-left:20px" required><br /><br />
-            <span id="availableSeatsError" class="error" style="display: block; color: red; margin-left:20px;"></span><br />
-
-            <label for="price" style="margin-left:20px">Price (RSD):</label><br />
-            <input type="number" id="price" name="price" style="margin-left:20px" required><br /><br />
-            <span id="priceError" class="error" style="display: block; color: red; margin-left:20px;"></span><br />
-
-            <button type="submit" id="addFlightBtn" style="margin-left:20px">Add flight</button>
-        </form>
+        <div class="add-flight-form-container">
+            <h1>Add flight</h1>
+            <form id="addFlightForm">
+                <table>
+                    <tr>
+                        <td><label for="airlineSelect">Airline:</label></td>
+                        <td>
+                            <select id="airlineSelect" name="airline" required></select>
+                            <br>
+                            <span id="airlineSelectError" class="error"></span>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td><label for="fromInput">From:</label></td>
+                        <td>
+                            <input type="text" id="fromInput" name="from" required>
+                            <br>
+                            <span id="fromInputError" class="error"></span>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td><label for="destinationInput">Destination:</label></td>
+                        <td>
+                            <input type="text" id="destinationInput" name="destination" required>
+                            <br>
+                            <span id="destinationInputError" class="error"></span>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td><label for="departureDateTime">Departure Date and Time:</label></td>
+                        <td>
+                            <input type="datetime-local" id="departureDateTime" name="departureDateTime" required>
+                            <br>
+                            <span id="departureDateTimeError" class="error"></span>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td><label for="arrivalDateTime">Arrival Date and Time:</label></td>
+                        <td>
+                            <input type="datetime-local" id="arrivalDateTime" name="arrivalDateTime" required>
+                            <br>
+                            <span id="arrivalDateTimeError" class="error"></span>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td><label for="availableSeats">Available Seats:</label></td>
+                        <td>
+                            <input type="number" id="availableSeats" name="availableSeats" required>
+                            <br>
+                            <span id="availableSeatsError" class="error"></span>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td><label for="price">Price (RSD):</label></td>
+                        <td>
+                            <input type="number" id="price" name="price" required>
+                            <br>
+                            <span id="priceError" class="error"></span>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td colspan="2">
+                            <button type="submit" id="addFlightBtn">Add flight</button>
+                        </td>
+                    </tr>
+                </table>
+            </form>
+        </div>
         <div id="editFlight"></div>
         <br />
         <h1>All flights</h1>
@@ -1576,7 +1688,7 @@
             </tbody>
         </table>
     </div>
-    <div id="allReservations" style="display: none; margin-left: 20px; margin-right:20px;">
+    <div id="allReservations" class="profile-div">
         <br />
         <h1>All reservations</h1>
         <br />
@@ -1600,7 +1712,7 @@
             </tbody>
         </table>
     </div>
-    <div id="createdReviews" style="display: none; margin-left: 20px; margin-right:20px;">
+    <div id="createdReviews" class="profile-div">
         <br />
         <h1>Created reviews</h1>
         <br />

@@ -741,7 +741,7 @@
         "Name": "a1",
         "Address": "a",
         "ContactInfo": "a",
-        "IsDeleted": false,
+        "IsDeleted": true,
         "Flights": [],
         "Reviews": []
       },
@@ -752,11 +752,11 @@
       "AvailableSeats": 32,
       "BookedSeats": 1,
       "Price": 1111,
-      "IsDeleted": false,
+      "IsDeleted": true,
       "Status": "Active"
     },
     "NumberOfPassengers": 1,
     "TotalPrice": 1111,
-    "Status": 1
+    "Status": 3
   }
 ]
