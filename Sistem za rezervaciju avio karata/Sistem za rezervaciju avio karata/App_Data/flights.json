@@ -12,8 +12,8 @@
     },
     "From": "Belgrade",
     "Destination": "Dubai",
-    "DepartureDateTime": "2024-07-01T09:36:21.1064785+02:00",
-    "ArrivalDateTime": "2024-07-02T09:36:21.1064785+02:00",
+    "DepartureDateTime": "2024-07-01T07:37:00",
+    "ArrivalDateTime": "2024-07-02T07:36:00",
     "AvailableSeats": 97,
     "BookedSeats": 3,
     "Price": 7000,
@@ -138,12 +138,33 @@
     },
     "From": "a",
     "Destination": "a",
-    "DepartureDateTime": "2024-06-29T13:49:00",
-    "ArrivalDateTime": "2024-06-30T23:50:00",
+    "DepartureDateTime": "2024-06-29T09:49:00",
+    "ArrivalDateTime": "2024-06-30T19:50:00",
     "AvailableSeats": 32,
     "BookedSeats": 1,
     "Price": 1111,
     "IsDeleted": false,
+    "Status": "Active"
+  },
+  {
+    "Id": 8,
+    "Airline": {
+      "Id": 1,
+      "Name": "Nikola Tesla Airlines",
+      "Address": "Aerodrom Beograd 59, Beograd 11180",
+      "ContactInfo": "tel 011 2094444",
+      "IsDeleted": false,
+      "Flights": [],
+      "Reviews": []
+    },
+    "From": "adsads",
+    "Destination": "dasads",
+    "DepartureDateTime": "2024-10-16T07:00:00",
+    "ArrivalDateTime": "2024-10-16T09:00:00",
+    "AvailableSeats": 33,
+    "BookedSeats": 0,
+    "Price": 13213,
+    "IsDeleted": true,
     "Status": "Active"
   }
 ]

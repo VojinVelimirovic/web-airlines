@@ -24,11 +24,11 @@ namespace Sistem_za_rezervaciju_avio_karata
         }
         public override void Init()
         {
-            this.PostAuthenticateRequest += MvcApplication_PostAuthenticateRequest;
+            this.PostAuthenticateRequest += Application_PostAuthenticateRequest;
             base.Init();
         }
 
-        void MvcApplication_PostAuthenticateRequest(object sender, EventArgs e)
+        void Application_PostAuthenticateRequest(object sender, EventArgs e)
         {
             System.Web.HttpContext.Current.SetSessionStateBehavior(
                 SessionStateBehavior.Required);

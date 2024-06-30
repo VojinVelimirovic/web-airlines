@@ -1172,6 +1172,97 @@
 
                 displayAllFlights(filteredFlights);
             });
+
+            $(document).on('click', '.editFlightBtn', function () {
+                const flight = JSON.parse($(this).attr('data-flight'));
+                let hasReservation = false;
+                allReservations.forEach(function (reservation) {
+                    if (reservation.flight.id === flight.id && !reservation.flight.isDeleted && !reservation.flight.airline.isDeleted &&
+                        (reservation.status === 'Created' || reservation.status === 'Approved')) {
+                        hasReservation = true;
+                    }
+                });
+
+                function toLocalISOString(dateStr) {
+                    const date = new Date(dateStr);
+                    const offset = date.getTimezoneOffset();
+                    const localDate = new Date(date.getTime() - (offset * 60 * 1000));
+                    return localDate.toISOString().slice(0, 16);
+                }
+
+                const departureDateTime = toLocalISOString(flight.departureDateTime);
+                const arrivalDateTime = toLocalISOString(flight.arrivalDateTime);
+
+                const editForm = `
+        <h1>Edit flight</h1>
+        <br />
+        <form id="editFlightForm" data-flight-id="${flight.id}">
+            <label for="editDepartureDateTime" style="margin-left:20px">Departure Date and Time:</label><br />
+            <input type="datetime-local" id="editDepartureDateTime" style="margin-left:20px" name="departureDateTime" value="${departureDateTime}" required><br /><br />
+            
+            <label for="editArrivalDateTime" style="margin-left:20px">Arrival Date and Time:</label><br />
+            <input type="datetime-local" id="editArrivalDateTime" style="margin-left:20px" name="arrivalDateTime" value="${arrivalDateTime}" required><br /><br />
+            
+            <label for="editAvailableSeats" style="margin-left:20px">Available Seats:</label><br />
+            <input type="number" id="editAvailableSeats" style="margin-left:20px" name="availableSeats" value="${flight.availableSeats}" required><br /><br />
+            
+            <label for="editPrice" style="margin-left:20px">Price (RSD):</label><br />
+            <input type="number" style="margin-left:20px" id="editPrice" name="price" value="${flight.price}" ${hasReservation ? 'disabled' : ''} required><br /><br />
+            
+            <label style="margin-left:20px" for="editStatus">Status:</label><br />
+            <select style="margin-left:20px" id="editStatus" name="status" required>
+                <option value="Active" ${flight.status === 'Active' ? 'selected' : ''}>Active</option>
+                <option value="Cancelled" ${flight.status === 'Cancelled' ? 'selected' : ''}>Cancelled</option>
+            </select><br /><br />
+            
+            <button style="margin-left:20px" type="submit">Submit</button>
+            <button type="button" id="cancelFlightEditBtn">Cancel</button>
+        </form>
+    `;
+                $('#editFlight').html(editForm);
+                $('#editFlight').show();
+                $('#editFlightForm').submit(function (event) {
+                    event.preventDefault();
+
+                    let editDepartureDateTime = $('#editDepartureDateTime').val();
+                    let editArrivalDateTime = $('#editArrivalDateTime').val();
+                    let editAvailableSeats = $('#editAvailableSeats').val();
+                    let editPrice = $('#editPrice').val();
+
+                    const updatedFlight = {
+                        id: flight.id,
+                        departureDateTime: editDepartureDateTime,
+                        arrivalDateTime: editArrivalDateTime,
+                        availableSeats: editAvailableSeats,
+                        price: editPrice,
+                        status: $('#editStatus').val(),
+                    };
+
+                    let stringifiedFlight = JSON.stringify(updatedFlight)
+                        .replace("'", '&#39;')
+                        .replace("&", '&amp;')
+                        .replace("<", '&lt;')
+                        .replace(">", '&gt;');
+
+                    $.ajax({
+                        url: `/api/flights/update`,
+                        method: 'POST',
+                        contentType: 'application/json',
+                        data: stringifiedFlight,
+                        success: function () {
+                            $('#editFlight').hide();
+                            loadAllFlights(); 
+                        },
+                        error: function (xhr) {
+                            console.error('Failed to update flight:', xhr.responseText);
+                        }
+                    });
+                });
+                $('#cancelFlightEditBtn').click(function () {
+                    $('#editFlight').hide();
+                });
+            });
+
         });
     </script>
 </head>
@@ -1448,6 +1539,7 @@
 
             <button type="submit" id="addFlightBtn" style="margin-left:20px">Add flight</button>
         </form>
+        <div id="editFlight"></div>
         <br />
         <h1>All flights</h1>
         <br />

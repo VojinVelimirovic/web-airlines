@@ -51,5 +51,22 @@ namespace Sistem_za_rezervaciju_avio_karata.Controllers
             }
             return Ok(Flights.AddFlight(flight));
         }
+
+        [HttpPost]
+        [Route("api/flights/update")]
+        public IHttpActionResult Update(Flight flight)
+        {
+            if (flight == null)
+            {
+                return BadRequest();
+            }
+            var existingFlight = Flights.FlightsList.FirstOrDefault(a => a.Id == flight.Id);
+            if (existingFlight == null)
+            {
+                return BadRequest("Flight not found.");
+            }
+            Flights.UpdateFlight(flight);
+            return Ok("Flight updated successfully.");
+        }
     }
 }

@@ -88,25 +88,57 @@ namespace Sistem_za_rezervaciju_avio_karata.Models
             Airlines.SaveAirlines();
         }
 
-        public static Flight UpdateFlight(Flight updatedFlight)
+        public static void UpdateFlight(Flight updatedFlight)
         {
-            var existingFlight = FlightsList.FirstOrDefault(f =>
-                f.Airline.Name == updatedFlight.Airline.Name &&
-                f.From == updatedFlight.From &&
-                f.Destination == updatedFlight.Destination &&
-                f.DepartureDateTime == updatedFlight.DepartureDateTime
-            );
-
-            if (existingFlight != null)
+            var flight = FlightsList.FirstOrDefault(f => f.Id == updatedFlight.Id);
+            flight.DepartureDateTime = updatedFlight.DepartureDateTime;
+            flight.ArrivalDateTime = updatedFlight.ArrivalDateTime;
+            flight.AvailableSeats = updatedFlight.AvailableSeats;
+            flight.Price = updatedFlight.Price;
+            flight.Status = updatedFlight.Status;
+            foreach (var user in Users.UsersList)
             {
-                existingFlight.AvailableSeats = updatedFlight.AvailableSeats;
-                existingFlight.BookedSeats = updatedFlight.BookedSeats;
-                existingFlight.Status = updatedFlight.Status;
-                existingFlight.Price = updatedFlight.Price;
-                SaveFlights();
+                foreach (var reservation in user.Reservations)
+                {
+                    if (reservation.Flight.Id == updatedFlight.Id)
+                    {
+                        reservation.Flight.DepartureDateTime = updatedFlight.DepartureDateTime;
+                        reservation.Flight.ArrivalDateTime = updatedFlight.ArrivalDateTime;
+                        reservation.Flight.AvailableSeats = updatedFlight.AvailableSeats;
+                        reservation.Flight.Price = updatedFlight.Price;
+                        reservation.Flight.Status = updatedFlight.Status;
+                    }
+                }
             }
-
-            return existingFlight;
+            foreach (var reservation in Reservations.ReservationsList)
+            {
+                if (reservation.Flight.Id == updatedFlight.Id)
+                {
+                    reservation.Flight.DepartureDateTime = updatedFlight.DepartureDateTime;
+                    reservation.Flight.ArrivalDateTime = updatedFlight.ArrivalDateTime;
+                    reservation.Flight.AvailableSeats = updatedFlight.AvailableSeats;
+                    reservation.Flight.Price = updatedFlight.Price;
+                    reservation.Flight.Status = updatedFlight.Status;
+                }
+            }
+            foreach (var airline in Airlines.AirlinesList)
+            {
+                foreach (var airlineFlight in airline.Flights)
+                {
+                    if (airlineFlight.Id == updatedFlight.Id)
+                    {
+                        airlineFlight.DepartureDateTime = updatedFlight.DepartureDateTime;
+                        airlineFlight.ArrivalDateTime = updatedFlight.ArrivalDateTime;
+                        airlineFlight.AvailableSeats = updatedFlight.AvailableSeats;
+                        airlineFlight.Price = updatedFlight.Price;
+                        airlineFlight.Status = updatedFlight.Status;
+                    }
+                }
+            }
+            SaveFlights();
+            Users.SaveUsers();
+            Reservations.SaveReservations();
+            Airlines.SaveAirlines();
         }
     }
 }
